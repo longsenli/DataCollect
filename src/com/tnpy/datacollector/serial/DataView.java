@@ -344,26 +344,22 @@ public class DataView extends Frame {
 			if (data == null || data.length < 1) { // 检查数据是否读取正确
 			    JOptionPane.showMessageDialog(null, "读取数据过程中未获取到有效数据！", "错误",
 				    JOptionPane.INFORMATION_MESSAGE);
-			    System.exit(0);
 			} else {
 			    try {
 				// 解析数据,依据温度表的协议
 				int address = Bytes2HexStr.getInt2(data, 0);
-				float temp = (float) Bytes2HexStr.getInt4(data, 6)/(float)10;
+				float temp = (float) Bytes2HexStr.getInt4(data, 6) / (float) 10;
 				// 更新界面Label值
 				arTem[address].setText(temp + " ℃");
 			    } catch (ArrayIndexOutOfBoundsException e) {
 				JOptionPane.showMessageDialog(null, "数据解析过程出错，更新界面数据失败！", "错误",
 					JOptionPane.INFORMATION_MESSAGE);
-				System.exit(0);
 			    }
 			}
 		    }
 		} catch (Exception e) {
 		    JOptionPane.showMessageDialog(null, e, "错误", JOptionPane.INFORMATION_MESSAGE);
-		    System.exit(0); // 发生读取错误时显示错误信息后退出系统
 		}
-		break;
 	    }
 	}
     }

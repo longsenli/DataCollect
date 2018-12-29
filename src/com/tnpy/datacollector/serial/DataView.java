@@ -346,15 +346,12 @@ public class DataView extends Frame {
 				    JOptionPane.INFORMATION_MESSAGE);
 			    System.exit(0);
 			} else {
-			    String dataHex = Bytes2HexStr.bytesToHexFun1(data);
-			    String address = dataHex.substring(0, 1);// 仪表地址
-			    String temp = dataHex.substring(6, 9);// 仪表温度
 			    try {
-				// 解析数据(临时）
-				int addressInt = 15;
-				float tempFloat = (float) 32.2;
+				// 解析数据,依据温度表的协议
+				int address = Bytes2HexStr.getInt2(data, 0);
+				float temp = (float) Bytes2HexStr.getInt4(data, 6)/(float)10;
 				// 更新界面Label值
-				arTem[addressInt].setText(tempFloat + " ℃");
+				arTem[address].setText(temp + " ℃");
 			    } catch (ArrayIndexOutOfBoundsException e) {
 				JOptionPane.showMessageDialog(null, "数据解析过程出错，更新界面数据失败！", "错误",
 					JOptionPane.INFORMATION_MESSAGE);

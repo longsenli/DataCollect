@@ -87,6 +87,17 @@ public class Bytes2HexStr {
 	return bytes;
     }
 
+    // 从byte数组的index处的连续2个字节获得一个int
+    public static int getInt2(byte[] arr, int index) {
+	return (0xff00 & (arr[index] << 8)) | (0x00ff & arr[index + 1]);
+    }
+    
+    // 从byte数组的index处的连续4个字节获得一个int
+    public static int getInt4(byte[] arr, int index) {
+	return (0xff000000 & (arr[index + 0] << 24)) | (0x00ff0000 & (arr[index + 1] << 16))
+		| (0x0000ff00 & (arr[index + 2] << 8)) | (0x000000ff & arr[index + 3]);
+    }
+
     public static void main(String[] args) throws Exception {
 	byte[] bytes = "测试".getBytes("utf-8");
 	System.out.println("字节数组为：" + Arrays.toString(bytes));

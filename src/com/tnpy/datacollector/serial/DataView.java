@@ -173,8 +173,7 @@ public class DataView extends Frame {
 				}
 			    }.start();
 			} catch (Exception e1) {
-			    // 发生错误时使用一个Dialog提示具体的错误信息
-			    JOptionPane.showMessageDialog(null, e1, "错误", JOptionPane.INFORMATION_MESSAGE);
+			    e1.printStackTrace();
 			}
 		    }
 		}
@@ -347,10 +346,10 @@ public class DataView extends Frame {
 			} else {
 			    try {
 				// 解析数据,依据温度表的协议
-				int address = Bytes2HexStr.getInt2(data, 0);
-				float temp = (float) Bytes2HexStr.getInt4(data, 6) / (float) 10;
-				// 更新界面Label值
-				arTem[address].setText(temp + " ℃");
+				int address = Bytes2HexStr.getInt1(data, 0);
+				float temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
+				// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+				arTem[address-1].setText(temp + " ℃");
 			    } catch (ArrayIndexOutOfBoundsException e) {
 				JOptionPane.showMessageDialog(null, "数据解析过程出错，更新界面数据失败！", "错误",
 					JOptionPane.INFORMATION_MESSAGE);

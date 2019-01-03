@@ -87,6 +87,11 @@ public class Bytes2HexStr {
 	return bytes;
     }
 
+    // 从byte数组的index处的连续1个字节获得一个int
+    public static int getInt1(byte[] arr, int index) {
+	return (0x00ff & arr[index]);
+    }
+    
     // 从byte数组的index处的连续2个字节获得一个int
     public static int getInt2(byte[] arr, int index) {
 	return (0xff00 & (arr[index] << 8)) | (0x00ff & arr[index + 1]);

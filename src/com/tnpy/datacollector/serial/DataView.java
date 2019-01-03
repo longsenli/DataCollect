@@ -141,7 +141,6 @@ public class DataView extends Frame {
 			// 串口名、波特率均获取正确时
 			int bps = Integer.parseInt(bpsStr);
 			try {
-
 			    // 获取指定端口名及波特率的串口对象
 			    serialPort = SerialTool.openPort(commName, bps);
 			    // 在该串口对象上添加监听器
@@ -149,7 +148,6 @@ public class DataView extends Frame {
 			    // 监听成功进行提示
 			    JOptionPane.showMessageDialog(null, "监听成功，稍后将显示监测数据！", "提示",
 				    JOptionPane.INFORMATION_MESSAGE);
-
 			    // 启动定时请求数据的线程.余姚精创仪表有限公司 KCM-91WRS温度变送器
 			    new Thread() {
 				public void run() {
@@ -164,6 +162,7 @@ public class DataView extends Frame {
 						String crc = CRC16.getCRC(Bytes2HexStr.toBytes(halfOrder));
 						byte[] order = Bytes2HexStr.toBytes(halfOrder + crc);
 						SerialTool.sendToPort(serialPort, order);
+						// 等待一个数据处理后，再请求下一个数据
 						sleep(1000);
 					    }
 					} catch (Exception e) {
@@ -179,9 +178,7 @@ public class DataView extends Frame {
 		}
 	    }
 	});
-
 	this.setResizable(false);
-
 	new Thread(new RepaintThread()).start(); // 启动重画线程
     }
 
@@ -192,21 +189,17 @@ public class DataView extends Frame {
 	Color c = g.getColor();
 	g.setColor(Color.black);
 	g.setFont(new Font("微软雅黑", Font.BOLD, 25));
-
 	for (int i = 0; i < num; i++) {
 	    int x = 45 + (i % 3) * 380;
 	    int y = 80 + 70 * Math.round(i / 3);
 	    g.drawString("温度" + (i + 1) + ":", x, y);
 	}
-
 	g.setColor(Color.gray);
 	g.setFont(new Font("微软雅黑", Font.BOLD, 20));
 	g.drawString(" 串口选择： ", 45, 780);
-
 	g.setColor(Color.gray);
 	g.setFont(new Font("微软雅黑", Font.BOLD, 20));
 	g.drawString(" 波特率： ", 425, 780);
-
     }
 
     /**
@@ -239,7 +232,6 @@ public class DataView extends Frame {
 
 		    // 添加新扫描到的可用串口
 		    for (String s : commList) {
-
 			// 该串口名是否已存在，初始默认为不存在（在commList里存在但在commChoice里不存在，则新添加）
 			boolean commExist = false;
 
@@ -250,7 +242,6 @@ public class DataView extends Frame {
 				break;
 			    }
 			}
-
 			if (commExist) {
 			    // 当前扫描到的串口名已经在初始扫描时存在，直接进入下一次循环
 			    continue;
@@ -259,10 +250,8 @@ public class DataView extends Frame {
 			    commChoice.add(s);
 			}
 		    }
-
 		    // 移除已经不可用的串口
 		    for (int i = 0; i < commChoice.getItemCount(); i++) {
-
 			// 该串口是否已失效，初始默认为已经失效（在commChoice里存在但在commList里不存在，则已经失效）
 			boolean commNotExist = true;
 
@@ -272,19 +261,16 @@ public class DataView extends Frame {
 				break;
 			    }
 			}
-
 			if (commNotExist) {
 			    commChoice.remove(i);
 			} else {
 			    continue;
 			}
 		    }
-
 		} else {
 		    // 如果扫描到的commList为空，则移除所有已有串口
 		    commChoice.removeAll();
 		}
-
 		try {
 		    Thread.sleep(30);
 		} catch (InterruptedException e) {
@@ -305,59 +291,68 @@ public class DataView extends Frame {
 	 * 处理监控到的串口事件
 	 */
 	public void serialEvent(SerialPortEvent serialPortEvent) {
-
+	    try {
+		// 等待数据全部到位。
+		Thread.sleep(100);
+	    } catch (InterruptedException e1) {
+		e1.printStackTrace();
+	    }
 	    switch (serialPortEvent.getEventType()) {
-
 	    case SerialPortEvent.BI: // 10 通讯中断
 		JOptionPane.showMessageDialog(null, "与串口设备通讯中断", "错误", JOptionPane.INFORMATION_MESSAGE);
 		break;
-
 	    case SerialPortEvent.OE: // 7 溢位（溢出）错误
-
 	    case SerialPortEvent.FE: // 9 帧错误
-
 	    case SerialPortEvent.PE: // 8 奇偶校验错误
-
 	    case SerialPortEvent.CD: // 6 载波检测
-
 	    case SerialPortEvent.CTS: // 3 清除待发送数据
-
 	    case SerialPortEvent.DSR: // 4 待发送数据准备好了
-
 	    case SerialPortEvent.RI: // 5 振铃指示
-
 	    case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 2 输出缓冲区已清空
 		break;
-
 	    case SerialPortEvent.DATA_AVAILABLE: // 1 串口存在可用数据
-
 		byte[] data = null;
-
 		try {
 		    if (serialPort == null) {
 			JOptionPane.showMessageDialog(null, "串口对象为空！监听失败！", "错误", JOptionPane.INFORMATION_MESSAGE);
 		    } else {
 			data = SerialTool.readFromPort(serialPort); // 读取数据，存入字节数组
 
-			// 自定义解析过程
-			if (data == null || data.length < 1) { // 检查数据是否读取正确
-			    JOptionPane.showMessageDialog(null, "读取数据过程中未获取到有效数据！", "错误",
-				    JOptionPane.INFORMATION_MESSAGE);
+			// 余姚精创仪表有限公司 KCM-91WRS温度变送器
+			if (data == null || data.length != 7) { // 检查数据是否读取正确
+			    System.out.println("读取数据过程中未获取到有效数据");
 			} else {
-			    try {
-				// 解析数据,依据温度表的协议
-				int address = Bytes2HexStr.getInt1(data, 0);
-				float temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
-				// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
-				arTem[address-1].setText(temp + " ℃");
-			    } catch (ArrayIndexOutOfBoundsException e) {
-				JOptionPane.showMessageDialog(null, "数据解析过程出错，更新界面数据失败！", "错误",
-					JOptionPane.INFORMATION_MESSAGE);
+			    // CRC校验
+			    String strData = Bytes2HexStr.bytesToHexFun1(data);
+			    String crc1 = strData.substring(10);
+			    byte[] partData = new byte[5];
+			    System.arraycopy(data, 0, partData, 0, 5);
+			    String crc2 = CRC16.getCRC(partData);
+			    if (!crc1.equalsIgnoreCase(crc2)) {
+				System.out.println("接收数据CRC检验错误");
+			    } else {
+				try {
+				    // 解析数据,依据温度表的协议
+				    int address = Bytes2HexStr.getInt1(data, 0);
+				    //数据长度1byte或2byte
+				    String dataLength=strData.substring(4, 6);
+				    if(dataLength.equals("01")) {
+					    float temp = (float) Bytes2HexStr.getInt1(data, 4) / (float) 10;
+					    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+					    arTem[address - 1].setText(temp + " ℃");
+				    }else if(dataLength.equals("02")){
+					    float temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
+					    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+					    arTem[address - 1].setText(temp + " ℃");
+				    }
+				} catch (ArrayIndexOutOfBoundsException e) {
+				    System.out.println("数据解析过程出错，更新界面数据失败！");
+				}
 			    }
 			}
 		    }
 		} catch (Exception e) {
-		    JOptionPane.showMessageDialog(null, e, "错误", JOptionPane.INFORMATION_MESSAGE);
+		    e.printStackTrace();
 		}
 	    }
 	}

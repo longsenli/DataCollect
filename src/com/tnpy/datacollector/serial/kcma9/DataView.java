@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial;
+package com.tnpy.datacollector.serial.kcma9;
 
 import java.awt.Button;
 import java.awt.Choice;
@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import com.tnpy.datacollector.Bytes2HexStr;
 import com.tnpy.datacollector.CRC16;
 import com.tnpy.datacollector.ExceptionWriter;
+import com.tnpy.datacollector.serial.SerialTool;
 
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;

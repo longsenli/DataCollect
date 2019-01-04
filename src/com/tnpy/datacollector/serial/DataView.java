@@ -12,7 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -30,24 +32,29 @@ import gnu.io.SerialPortEventListener;
 public class DataView extends Frame {
 
     private static final long serialVersionUID = 1L;
+    Client client;
 
-    Client client = null;
+    private List<String> commList; // 保存可用端口号
+    private SerialPort serialPort; // 保存串口对象
 
-    private List<String> commList = null; // 保存可用端口号
-    private SerialPort serialPort = null; // 保存串口对象
-
-    private Font font = new Font("微软雅黑", Font.BOLD, 25);
+    // 配置文件
+    Properties config;
 
     // 485仪表的数量
-    private int num = 30;
-    private Label[] arTem = new Label[num];
+    private int num;
+    private Label[] arTem;
+    // 最新数据值
+    private float[] lastData;
+    // 计数器
+    private int counter = 0;
 
     private Choice commChoice = new Choice(); // 串口选择（下拉框）
     private Choice bpsChoice = new Choice(); // 波特率选择
 
     private Button openSerialButton = new Button("打开串口");
 
-    Image offScreen = null; // 重画时的画布
+    Image offScreen; // 重画时的画布
+    private Font font = new Font("微软雅黑", Font.BOLD, 25);
 
     /**
      * 类的构造方法
@@ -57,6 +64,16 @@ public class DataView extends Frame {
     public DataView(Client client) {
 	this.client = client;
 	commList = SerialTool.findPort(); // 程序初始化时就扫描一次有效串口
+
+	try (InputStream is = ClassLoader.getSystemResourceAsStream("com/tnpy/datacollector/config.properties");) {
+	    config = new Properties();
+	    config.load(is);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	num = Integer.parseInt(config.getProperty("instrument.num"));
+	arTem = new Label[num];
+	lastData = new float[num];
     }
 
     /**
@@ -154,9 +171,11 @@ public class DataView extends Frame {
 					    // 定期请求数据
 					    String[] address = { "01", "02", "03", "04", "05", "06", "07", "08", "09",
 						    "0A", "0B", "0C", "0D", "0E", "0F", "10", "11", "12", "13", "14",
-						    "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E" };
-					    for (String one : address) {
-						String halfOrder = one + "0310010001";
+						    "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
+						    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A" };
+					    for (int i = 0; i < num; i++) {
+						// 读实时温度命令
+						String halfOrder = address[i] + "0310010001";
 						String crc = CRC16.getCRC(Bytes2HexStr.toBytes(halfOrder));
 						byte[] order = Bytes2HexStr.toBytes(halfOrder + crc);
 						SerialTool.sendToPort(serialPort, order);
@@ -332,16 +351,23 @@ public class DataView extends Frame {
 				try {
 				    // 解析数据,依据温度表的协议
 				    int address = Bytes2HexStr.getInt1(data, 0);
-				    //数据长度1byte或2byte
-				    String dataLength=strData.substring(4, 6);
-				    if(dataLength.equals("01")) {
-					    float temp = (float) Bytes2HexStr.getInt1(data, 4) / (float) 10;
-					    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
-					    arTem[address - 1].setText(temp + " ℃");
-				    }else if(dataLength.equals("02")){
-					    float temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
-					    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
-					    arTem[address - 1].setText(temp + " ℃");
+				    // 数据长度1byte或2byte
+				    String dataLength = strData.substring(4, 6);
+				    float temp = (float) 0;
+				    if (dataLength.equals("01")) {
+					temp = (float) Bytes2HexStr.getInt1(data, 4) / (float) 10;
+				    } else if (dataLength.equals("02")) {
+					temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
+				    }
+				    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+				    arTem[address - 1].setText(temp + " ℃");
+
+				    // 保存最新数据
+				    lastData[address - 1] = temp;
+				    counter++;
+				    if (counter > 300) {// 大约1秒钟读一次数据，300次大约是5分钟
+					counter = 0;
+					new StoringData(lastData, config).start();
 				    }
 				} catch (ArrayIndexOutOfBoundsException e) {
 				    System.out.println("数据解析过程出错，更新界面数据失败！");

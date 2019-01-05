@@ -78,6 +78,7 @@ public class DataView extends Frame {
     /**
      * 主菜单窗口显示； 添加Label、按钮、下拉条及相关事件监听；
      */
+    @SuppressWarnings("deprecation")
     public void dataFrame() {
 	this.setBounds(client.LOC_X, client.LOC_Y, client.WIDTH, client.HEIGHT);
 	this.setTitle("串口数据采集");
@@ -119,13 +120,10 @@ public class DataView extends Frame {
 
 	// 添加波特率选项
 	bpsChoice.setBounds(526, 770, 200, 200);
-	bpsChoice.add("1200");
-	bpsChoice.add("2400");
 	bpsChoice.add("4800");
 	bpsChoice.add("9600");
 	bpsChoice.add("14400");
 	bpsChoice.add("19200");
-	bpsChoice.add("115200");
 	add(bpsChoice);
 
 	// 添加打开串口按钮
@@ -167,16 +165,12 @@ public class DataView extends Frame {
 				public void run() {
 				    while (true) {
 					try {
-					    // 定期请求数据
-					    String[] address = { "01", "02", "03", "04", "05", "06", "07", "08", "09",
-						    "0A", "0B", "0C", "0D", "0E", "0F", "10", "11", "12", "13", "14",
-						    "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
-						    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A" };
-					    for (int i = 0; i < num; i++) {
-						// 读实时温度命令
-						String halfOrder = address[i] + "0310010001";
-						String crc = Utilities.getCRC16(Utilities.hex2Bytes(halfOrder));
-						byte[] order = Utilities.hex2Bytes(halfOrder + crc);
+					    for (int i = 1; i <= num; i++) {
+						// 向各个仪表发出读实时温度命令
+						String orderWithoutCrc = String.format("%02x", i).toUpperCase()
+							+ "0310010001";
+						String crc = Utilities.getCRC16(Utilities.hex2Bytes(orderWithoutCrc));
+						byte[] order = Utilities.hex2Bytes(orderWithoutCrc + crc);
 						SerialTool.sendToPort(serialPort, order);
 						// 等待一个数据处理后，再请求下一个数据
 						sleep(1000);

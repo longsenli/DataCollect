@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 /**
  * 主程序
  */
-public class StartPage extends Frame {
+public class Monitor extends Frame {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,13 +43,13 @@ public class StartPage extends Frame {
     Image offScreen = null; // 用于双缓冲
 
     // 持有其他类
-    DataView dataview = new DataView(this); // 主界面类（显示监控数据主面板）
+    Board dataview = new Board(this); // 主界面类（显示监控数据主面板）
 
     /**
      * 主方法
      */
     public static void main(String[] args) {
-	new StartPage().launchFrame();
+	new Monitor().launchFrame();
     }
 
     /**
@@ -57,7 +57,7 @@ public class StartPage extends Frame {
      */
     public void launchFrame() {
 	this.setBounds(LOC_X, LOC_Y, WIDTH, HEIGHT); // 设定程序在桌面出现的位置
-	this.setTitle("串口数据采集"); // 设置程序标题
+	this.setTitle("实时数据监控"); // 设置程序标题
 	this.setBackground(Color.white); // 设置背景色
 
 	this.addWindowListener(new WindowAdapter() {
@@ -83,7 +83,7 @@ public class StartPage extends Frame {
 
 	g.setFont(new Font("微软雅黑", Font.BOLD, 40));
 	g.setColor(Color.black);
-	g.drawString("欢迎使用上位机数据监控采集系统", 300, 190);
+	g.drawString("欢迎使用上位机数据监控系统", 340, 190);
 
 	g.setFont(new Font("微软雅黑", Font.ITALIC, 26));
 	g.setColor(Color.BLACK);

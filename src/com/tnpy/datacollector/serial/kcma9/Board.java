@@ -12,9 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -28,24 +26,17 @@ import gnu.io.SerialPortEventListener;
 /**
  * 监测数据显示类
  */
-public class DataView extends Frame {
+public class Board extends Frame {
 
     private static final long serialVersionUID = 1L;
-    StartPage client;
+    Monitor client;
 
     private List<String> commList; // 保存可用端口号
     private SerialPort serialPort; // 保存串口对象
 
-    // 配置文件
-    Properties config;
-
     // 485仪表的数量
-    private int num;
-    private Label[] arTem;
-    // 最新数据值
-    private float[] lastData;
-    // 计数器
-    private int counter = 0;
+    private int num = 30;
+    private Label[] arTem = new Label[30];
 
     private Choice commChoice = new Choice(); // 串口选择（下拉框）
     private Choice bpsChoice = new Choice(); // 波特率选择
@@ -60,19 +51,9 @@ public class DataView extends Frame {
      * 
      * @param client
      */
-    public DataView(StartPage client) {
+    public Board(Monitor client) {
 	this.client = client;
 	commList = SerialTool.findPort(); // 程序初始化时就扫描一次有效串口
-
-	try (InputStream is = ClassLoader.getSystemResourceAsStream("com/tnpy/datacollector/config.properties");) {
-	    config = new Properties();
-	    config.load(is);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	num = Integer.parseInt(config.getProperty("instrument.num"));
-	arTem = new Label[num];
-	lastData = new float[num];
     }
 
     /**
@@ -81,7 +62,7 @@ public class DataView extends Frame {
     @SuppressWarnings("deprecation")
     public void dataFrame() {
 	this.setBounds(client.LOC_X, client.LOC_Y, client.WIDTH, client.HEIGHT);
-	this.setTitle("串口数据采集");
+	this.setTitle("实时数据监控");
 	this.setBackground(Color.white);
 	this.setLayout(null);
 
@@ -215,11 +196,11 @@ public class DataView extends Frame {
      */
     public void update(Graphics g) {
 	if (offScreen == null)
-	    offScreen = this.createImage(StartPage.WIDTH, StartPage.HEIGHT);
+	    offScreen = this.createImage(Monitor.WIDTH, Monitor.HEIGHT);
 	Graphics gOffScreen = offScreen.getGraphics();
 	Color c = gOffScreen.getColor();
 	gOffScreen.setColor(Color.white);
-	gOffScreen.fillRect(0, 0, StartPage.WIDTH, StartPage.HEIGHT); // 重画背景画布
+	gOffScreen.fillRect(0, 0, Monitor.WIDTH, Monitor.HEIGHT); // 重画背景画布
 	this.paint(gOffScreen); // 重画界面元素
 	gOffScreen.setColor(c);
 	g.drawImage(offScreen, 0, 0, null); // 将新画好的画布“贴”在原画布上
@@ -341,27 +322,19 @@ public class DataView extends Frame {
 				try {
 				    // 解析数据,依据温度表的协议
 				    int address = Utilities.oneByte2Int(data[0]);
-				    // code=3表示上传温度数据
 				    int functionCode = Utilities.oneByte2Int(data[1]);
+				    // code==3表示上传温度数据
 				    if (functionCode == 3) {
 					// 数据长度1byte或2byte
 					int dataLength = Utilities.oneByte2Int(data[2]);
-					float temp = -100;
+					float temp = 0;
 					if (dataLength == 1) {
 					    temp = (float) Utilities.oneByte2Int(data[4]) / (float) 10;
-					} else if (dataLength == 02) {
+					} else if (dataLength == 2) {
 					    temp = (float) Utilities.getShort2(data, 3) / (float) 10;
 					}
 					// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
 					arTem[address - 1].setText(String.valueOf(temp));
-
-					// 保存最新数据
-					lastData[address - 1] = temp;
-					counter++;
-					if (counter > 300) {// 大约1秒钟读一次数据，300次大约是5分钟
-					    counter = 0;
-					    new StoringData(lastData, config).start();
-					}
 				    }
 				} catch (ArrayIndexOutOfBoundsException e) {
 				    System.out.println("数据解析过程出错，更新界面数据失败！");

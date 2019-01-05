@@ -1,7 +1,7 @@
 package com.tnpy.datacollector.core.IMessage;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * 本组件系统使用的默认的消息规则，说明解析和反解析规则的

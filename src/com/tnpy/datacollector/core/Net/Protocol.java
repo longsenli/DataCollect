@@ -2,9 +2,9 @@ package com.tnpy.datacollector.core.Net;
 
 import java.util.UUID;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Security.Security;
 import com.tnpy.datacollector.framework.SoftZipped;
-import com.tnpy.datacollector.framework.Utilities;
 
 public class Protocol {
 

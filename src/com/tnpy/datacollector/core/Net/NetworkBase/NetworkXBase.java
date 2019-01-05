@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Net.Protocol;
 import com.tnpy.datacollector.core.Net.StateOne.AppSession;
 import com.tnpy.datacollector.core.Types.ActionOperateExTwo;
@@ -14,7 +15,6 @@ import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.core.Types.OperateResultExTwo;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

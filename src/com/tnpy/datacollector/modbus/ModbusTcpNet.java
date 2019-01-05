@@ -2,6 +2,7 @@ package com.tnpy.datacollector.modbus;
 
 import java.io.ByteArrayOutputStream;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.ModbusTcpMessage;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkDeviceBase;
 import com.tnpy.datacollector.core.Transfer.DataFormat;
@@ -10,7 +11,6 @@ import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.framework.SoftBasic;
 import com.tnpy.datacollector.framework.SoftIncrementCount;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

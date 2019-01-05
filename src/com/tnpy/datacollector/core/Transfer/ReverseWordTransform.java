@@ -1,7 +1,7 @@
 package com.tnpy.datacollector.core.Transfer;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * 以字节为单位的变换操作

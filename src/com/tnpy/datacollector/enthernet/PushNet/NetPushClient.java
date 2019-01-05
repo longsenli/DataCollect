@@ -2,6 +2,7 @@ package com.tnpy.datacollector.enthernet.PushNet;
 
 import java.net.Socket;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Net.Protocol;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkXBase;
 import com.tnpy.datacollector.core.Net.StateOne.AppSession;
@@ -9,7 +10,6 @@ import com.tnpy.datacollector.core.Types.ActionOperateExTwo;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.core.Types.OperateResultExTwo;
-import com.tnpy.datacollector.framework.Utilities;
 
 public class NetPushClient extends NetworkXBase {
 

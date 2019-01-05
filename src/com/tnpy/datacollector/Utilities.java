@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.framework;
+package com.tnpy.datacollector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -124,6 +124,17 @@ public class Utilities {
      */
     public static short getShort(byte[] bytes, int index) {
 	return (short) ((0xff & bytes[0 + index]) | (0xff00 & (bytes[1 + index] << 8)));
+    }
+
+    /**
+     * 将字节数组转换成short数据，高位在前，低位在后
+     * 
+     * @param bytes 字节数组
+     * @param index 起始位置
+     * @return short值
+     */
+    public static short getShort2(byte[] bytes, int index) {
+	return (short) ((0xff00 & (bytes[index] << 8)) | (0x00ff & bytes[index + 1]));
     }
 
     /**
@@ -361,6 +372,23 @@ public class Utilities {
 	return new String(buf);
     }
 
+    /*
+     * 16进制字符串转byte数组
+     */
+    public static byte[] hex2Bytes(String str) {
+	if (str == null || str.trim().equals("")) {
+	    return new byte[0];
+	}
+
+	byte[] bytes = new byte[str.length() / 2];
+	for (int i = 0; i < str.length() / 2; i++) {
+	    String subStr = str.substring(i * 2, i * 2 + 2);
+	    bytes[i] = (byte) Integer.parseInt(subStr, 16);
+	}
+
+	return bytes;
+    }
+
     /**
      * 获取指定时间的指定格式的字符串
      * 
@@ -373,4 +401,29 @@ public class Utilities {
 	String dateString = formatter.format(date);
 	return dateString;
     }
+
+    /*
+     * CRC16校验码
+     */
+    public static String getCRC16(byte[] bytes) {
+	int CRC = 0x0000ffff;
+	int POLYNOMIAL = 0x0000a001;
+
+	int i, j;
+	for (i = 0; i < bytes.length; i++) {
+	    CRC ^= ((int) bytes[i] & 0x000000ff);
+	    for (j = 0; j < 8; j++) {
+		if ((CRC & 0x00000001) != 0) {
+		    CRC >>= 1;
+		    CRC ^= POLYNOMIAL;
+		} else {
+		    CRC >>= 1;
+		}
+	    }
+	}
+	// 高低位互换
+	CRC = ((CRC & 0x0000FF00) >> 8) | ((CRC & 0x000000FF) << 8);
+	return Integer.toHexString(CRC);
+    }
+
 }

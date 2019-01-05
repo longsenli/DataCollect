@@ -3,7 +3,7 @@ package com.tnpy.datacollector.log;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.tnpy.datacollector.framework.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 单个日志的记录信息

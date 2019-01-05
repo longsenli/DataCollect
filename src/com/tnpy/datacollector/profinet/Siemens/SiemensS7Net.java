@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.S7Message;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkDeviceBase;
 import com.tnpy.datacollector.core.Transfer.ReverseBytesTransform;
@@ -12,7 +13,6 @@ import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.core.Types.OperateResultExThree;
 import com.tnpy.datacollector.core.Types.OperateResultExTwo;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

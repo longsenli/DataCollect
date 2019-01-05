@@ -1,6 +1,6 @@
 package com.tnpy.datacollector.core.Transfer;
 
-import com.tnpy.datacollector.framework.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 字节转换类的基类，提供了一些基础的转换方法

@@ -2,13 +2,13 @@ package com.tnpy.datacollector.enthernet.SimplifyNet;
 
 import java.util.UUID;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.NetMessage;
 import com.tnpy.datacollector.core.Net.NetHandle;
 import com.tnpy.datacollector.core.Net.Protocol;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkDoubleBase;
 import com.tnpy.datacollector.core.Transfer.RegularByteTransform;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * 同步访问的网络客户端

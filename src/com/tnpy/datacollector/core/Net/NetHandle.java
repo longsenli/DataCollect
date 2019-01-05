@@ -1,6 +1,6 @@
 package com.tnpy.datacollector.core.Net;
 
-import com.tnpy.datacollector.framework.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 用于通信过程中的暗号对象

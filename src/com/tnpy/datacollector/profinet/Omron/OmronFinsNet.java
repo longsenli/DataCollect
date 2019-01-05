@@ -2,13 +2,13 @@ package com.tnpy.datacollector.profinet.Omron;
 
 import java.net.Socket;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.FinsMessage;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkDeviceBase;
 import com.tnpy.datacollector.core.Transfer.ReverseWordTransform;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.core.Types.OperateResultExTwo;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

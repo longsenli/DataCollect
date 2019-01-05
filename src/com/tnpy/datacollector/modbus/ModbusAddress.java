@@ -1,8 +1,8 @@
 package com.tnpy.datacollector.modbus;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Address.DeviceAddressBase;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * Modbus协议地址格式，可以携带站号，功能码，地址信息

@@ -18,8 +18,7 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
-import com.tnpy.datacollector.serial.Bytes2HexStr;
-import com.tnpy.datacollector.serial.CRC16;
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.serial.SerialTool;
 
 import gnu.io.SerialPort;
@@ -32,7 +31,7 @@ import gnu.io.SerialPortEventListener;
 public class DataView extends Frame {
 
     private static final long serialVersionUID = 1L;
-    Client client;
+    StartPage client;
 
     private List<String> commList; // 保存可用端口号
     private SerialPort serialPort; // 保存串口对象
@@ -61,7 +60,7 @@ public class DataView extends Frame {
      * 
      * @param client
      */
-    public DataView(Client client) {
+    public DataView(StartPage client) {
 	this.client = client;
 	commList = SerialTool.findPort(); // 程序初始化时就扫描一次有效串口
 
@@ -176,8 +175,8 @@ public class DataView extends Frame {
 					    for (int i = 0; i < num; i++) {
 						// 读实时温度命令
 						String halfOrder = address[i] + "0310010001";
-						String crc = CRC16.getCRC(Bytes2HexStr.toBytes(halfOrder));
-						byte[] order = Bytes2HexStr.toBytes(halfOrder + crc);
+						String crc = Utilities.getCRC16(Utilities.hex2Bytes(halfOrder));
+						byte[] order = Utilities.hex2Bytes(halfOrder + crc);
 						SerialTool.sendToPort(serialPort, order);
 						// 等待一个数据处理后，再请求下一个数据
 						sleep(1000);
@@ -222,11 +221,11 @@ public class DataView extends Frame {
      */
     public void update(Graphics g) {
 	if (offScreen == null)
-	    offScreen = this.createImage(Client.WIDTH, Client.HEIGHT);
+	    offScreen = this.createImage(StartPage.WIDTH, StartPage.HEIGHT);
 	Graphics gOffScreen = offScreen.getGraphics();
 	Color c = gOffScreen.getColor();
 	gOffScreen.setColor(Color.white);
-	gOffScreen.fillRect(0, 0, Client.WIDTH, Client.HEIGHT); // 重画背景画布
+	gOffScreen.fillRect(0, 0, StartPage.WIDTH, StartPage.HEIGHT); // 重画背景画布
 	this.paint(gOffScreen); // 重画界面元素
 	gOffScreen.setColor(c);
 	g.drawImage(offScreen, 0, 0, null); // 将新画好的画布“贴”在原画布上
@@ -337,34 +336,38 @@ public class DataView extends Frame {
 			    System.out.println("读取数据过程中未获取到有效数据");
 			} else {
 			    // CRC校验
-			    String strData = Bytes2HexStr.bytesToHexFun1(data);
+			    String strData = Utilities.bytes2HexString(data);
 			    String crc1 = strData.substring(10);
 			    byte[] partData = new byte[5];
 			    System.arraycopy(data, 0, partData, 0, 5);
-			    String crc2 = CRC16.getCRC(partData);
+			    String crc2 = Utilities.getCRC16(partData);
 			    if (!crc1.equalsIgnoreCase(crc2)) {
 				System.out.println("接收数据CRC检验错误");
 			    } else {
 				try {
 				    // 解析数据,依据温度表的协议
-				    int address = Bytes2HexStr.getInt1(data, 0);
-				    // 数据长度1byte或2byte
-				    String dataLength = strData.substring(4, 6);
-				    float temp = (float) 0;
-				    if (dataLength.equals("01")) {
-					temp = (float) Bytes2HexStr.getInt1(data, 4) / (float) 10;
-				    } else if (dataLength.equals("02")) {
-					temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
-				    }
-				    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
-				    arTem[address - 1].setText(String.valueOf(temp));
+				    int address = Utilities.oneByte2Int(data[0]);
+				    // code=3表示上传温度数据
+				    int functionCode = Utilities.oneByte2Int(data[1]);
+				    if (functionCode == 3) {
+					// 数据长度1byte或2byte
+					int dataLength = Utilities.oneByte2Int(data[2]);
+					float temp = -100;
+					if (dataLength == 1) {
+					    temp = (float) Utilities.oneByte2Int(data[4]) / (float) 10;
+					} else if (dataLength == 02) {
+					    temp = (float) Utilities.getShort2(data, 3) / (float) 10;
+					}
+					// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+					arTem[address - 1].setText(String.valueOf(temp));
 
-				    // 保存最新数据
-				    lastData[address - 1] = temp;
-				    counter++;
-				    if (counter > 300) {// 大约1秒钟读一次数据，300次大约是5分钟
-					counter = 0;
-					new StoringData(lastData, config).start();
+					// 保存最新数据
+					lastData[address - 1] = temp;
+					counter++;
+					if (counter > 300) {// 大约1秒钟读一次数据，300次大约是5分钟
+					    counter = 0;
+					    new StoringData(lastData, config).start();
+					}
 				    }
 				} catch (ArrayIndexOutOfBoundsException e) {
 				    System.out.println("数据解析过程出错，更新界面数据失败！");

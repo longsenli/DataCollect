@@ -1,5 +1,6 @@
 package com.tnpy.datacollector.core.Net.NetworkBase;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.INetMessage;
 import com.tnpy.datacollector.core.Net.IReadWriteNet;
 import com.tnpy.datacollector.core.Transfer.IByteTransform;
@@ -7,7 +8,6 @@ import com.tnpy.datacollector.core.Types.IDataTransfer;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.framework.SoftBasic;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * 设备类的基类，提供了基础的字节读写方法，采用泛型继承实现

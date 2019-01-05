@@ -3,6 +3,7 @@ package com.tnpy.datacollector.enthernet.ComplexNet;
 import java.net.Socket;
 import java.util.Date;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Net.NetHandle;
 import com.tnpy.datacollector.core.Net.Protocol;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkXBase;
@@ -12,7 +13,6 @@ import com.tnpy.datacollector.core.Types.ActionOperateExOne;
 import com.tnpy.datacollector.core.Types.ActionOperateExThree;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
-import com.tnpy.datacollector.framework.Utilities;
 
 /**
  * 一个基于异步高性能的客户端网络类，支持主动接收服务器的消息

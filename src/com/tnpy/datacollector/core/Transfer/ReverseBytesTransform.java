@@ -1,6 +1,6 @@
 package com.tnpy.datacollector.core.Transfer;
 
-import com.tnpy.datacollector.framework.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 反转的字节变换类

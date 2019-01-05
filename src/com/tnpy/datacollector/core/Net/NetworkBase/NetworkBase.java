@@ -10,9 +10,9 @@ import java.net.SocketAddress;
 import java.util.Date;
 import java.util.UUID;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.INetMessage;
 import com.tnpy.datacollector.core.Types.TimeOut;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;

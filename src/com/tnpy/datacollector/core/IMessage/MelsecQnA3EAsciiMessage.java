@@ -1,6 +1,6 @@
 package com.tnpy.datacollector.core.IMessage;
 
-import com.tnpy.datacollector.framework.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 public class MelsecQnA3EAsciiMessage implements INetMessage {
     /**

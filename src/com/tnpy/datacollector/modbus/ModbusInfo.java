@@ -1,7 +1,7 @@
 package com.tnpy.datacollector.modbus;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

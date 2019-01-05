@@ -1,12 +1,12 @@
 package com.tnpy.datacollector.profinet.Melsec;
 
+import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.core.IMessage.MelsecQnA3EAsciiMessage;
 import com.tnpy.datacollector.core.Net.NetworkBase.NetworkDeviceBase;
 import com.tnpy.datacollector.core.Transfer.RegularByteTransform;
 import com.tnpy.datacollector.core.Types.OperateResult;
 import com.tnpy.datacollector.core.Types.OperateResultExOne;
 import com.tnpy.datacollector.core.Types.OperateResultExTwo;
-import com.tnpy.datacollector.framework.Utilities;
 import com.tnpy.datacollector.language.StringResources;
 
 /**

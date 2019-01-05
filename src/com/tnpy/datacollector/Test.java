@@ -18,7 +18,7 @@ import com.tnpy.datacollector.profinet.Melsec.MelsecMcNet;
 import com.tnpy.datacollector.profinet.Siemens.SiemensPLCS;
 import com.tnpy.datacollector.profinet.Siemens.SiemensS7Net;
 
-public class Main {
+public class Test {
 
     public static void main(String[] args) {
 

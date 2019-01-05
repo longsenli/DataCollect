@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 /**
  * 主程序
  */
-public class Client extends Frame {
+public class StartPage extends Frame {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class Client extends Frame {
      * 主方法
      */
     public static void main(String[] args) {
-	new Client().launchFrame();
+	new StartPage().launchFrame();
     }
 
     /**

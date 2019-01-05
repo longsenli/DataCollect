@@ -16,25 +16,25 @@ import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 /**
- * ´®¿Ú·şÎñÀà£¬Ìá¹©´ò¿ª¡¢¹Ø±Õ´®¿Ú£¬¶ÁÈ¡¡¢·¢ËÍ´®¿ÚÊı¾İµÈ·şÎñ£¨²ÉÓÃµ¥ÀıÉè¼ÆÄ£Ê½£©
+ * ä¸²å£æœåŠ¡ç±»ï¼Œæä¾›æ‰“å¼€ã€å…³é—­ä¸²å£ï¼Œè¯»å–ã€å‘é€ä¸²å£æ•°æ®ç­‰æœåŠ¡ï¼ˆé‡‡ç”¨å•ä¾‹è®¾è®¡æ¨¡å¼ï¼‰
  */
 public class SerialTool {
 
     private static SerialTool serialTool = null;
 
     static {
-	// ÔÚ¸ÃÀà±»ClassLoader¼ÓÔØÊ±¾Í³õÊ¼»¯Ò»¸öSerialTool¶ÔÏó
+	// åœ¨è¯¥ç±»è¢«ClassLoaderåŠ è½½æ—¶å°±åˆå§‹åŒ–ä¸€ä¸ªSerialToolå¯¹è±¡
 	if (serialTool == null) {
 	    serialTool = new SerialTool();
 	}
     }
 
-    // Ë½ÓĞ»¯SerialToolÀàµÄ¹¹Ôì·½·¨£¬²»ÔÊĞíÆäËûÀàÉú³ÉSerialTool¶ÔÏó
+    // ç§æœ‰åŒ–SerialToolç±»çš„æ„é€ æ–¹æ³•ï¼Œä¸å…è®¸å…¶ä»–ç±»ç”ŸæˆSerialToolå¯¹è±¡
     private SerialTool() {
     }
 
     /**
-     * »ñÈ¡Ìá¹©·şÎñµÄSerialTool¶ÔÏó
+     * è·å–æä¾›æœåŠ¡çš„SerialToolå¯¹è±¡
      * 
      * @return serialTool
      */
@@ -46,18 +46,18 @@ public class SerialTool {
     }
 
     /**
-     * ²éÕÒËùÓĞ¿ÉÓÃ¶Ë¿Ú
+     * æŸ¥æ‰¾æ‰€æœ‰å¯ç”¨ç«¯å£
      * 
-     * @return ¿ÉÓÃ¶Ë¿ÚÃû³ÆÁĞ±í
+     * @return å¯ç”¨ç«¯å£åç§°åˆ—è¡¨
      */
     public static final ArrayList<String> findPort() {
 
-	// »ñµÃµ±Ç°ËùÓĞ¿ÉÓÃ´®¿Ú
+	// è·å¾—å½“å‰æ‰€æœ‰å¯ç”¨ä¸²å£
 	Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
 
 	ArrayList<String> portNameList = new ArrayList<>();
 
-	// ½«¿ÉÓÃ´®¿ÚÃûÌí¼Óµ½List²¢·µ»Ø¸ÃList
+	// å°†å¯ç”¨ä¸²å£åæ·»åŠ åˆ°Listå¹¶è¿”å›è¯¥List
 	while (portList.hasMoreElements()) {
 	    String portName = portList.nextElement().getName();
 	    portNameList.add(portName);
@@ -66,54 +66,54 @@ public class SerialTool {
     }
 
     /**
-     * ´ò¿ª´®¿Ú
+     * æ‰“å¼€ä¸²å£
      * 
-     * @param portName ¶Ë¿ÚÃû³Æ
-     * @param baudrate ²¨ÌØÂÊ
-     * @return ´®¿Ú¶ÔÏó
-     * @throws SerialPortException ÉèÖÃ´®¿Ú²ÎÊıÊ§°Ü
-     * @throws NotASerialPort      ¶Ë¿ÚÖ¸ÏòÉè±¸²»ÊÇ´®¿ÚÀàĞÍ
-     * @throws NoSuchPort          Ã»ÓĞ¸Ã¶Ë¿Ú¶ÔÓ¦µÄ´®¿ÚÉè±¸
-     * @throws PortInUse           ¶Ë¿ÚÒÑ±»Õ¼ÓÃ
+     * @param portName ç«¯å£åç§°
+     * @param baudrate æ³¢ç‰¹ç‡
+     * @return ä¸²å£å¯¹è±¡
+     * @throws SerialPortException è®¾ç½®ä¸²å£å‚æ•°å¤±è´¥
+     * @throws NotASerialPort      ç«¯å£æŒ‡å‘è®¾å¤‡ä¸æ˜¯ä¸²å£ç±»å‹
+     * @throws NoSuchPort          æ²¡æœ‰è¯¥ç«¯å£å¯¹åº”çš„ä¸²å£è®¾å¤‡
+     * @throws PortInUse           ç«¯å£å·²è¢«å ç”¨
      */
-    public static final SerialPort openPort(String portName, int baudrate) throws SerialPortException {
+    public static final SerialPort openPort(String portName, int baudrate) throws Exception {
 
 	try {
 
-	    // Í¨¹ı¶Ë¿ÚÃûÊ¶±ğ¶Ë¿Ú
+	    // é€šè¿‡ç«¯å£åè¯†åˆ«ç«¯å£
 	    CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 
-	    // ´ò¿ª¶Ë¿Ú£¬²¢¸ø¶Ë¿ÚÃû×ÖºÍÒ»¸ötimeout£¨´ò¿ª²Ù×÷µÄ³¬Ê±Ê±¼ä£©
+	    // æ‰“å¼€ç«¯å£ï¼Œå¹¶ç»™ç«¯å£åå­—å’Œä¸€ä¸ªtimeoutï¼ˆæ‰“å¼€æ“ä½œçš„è¶…æ—¶æ—¶é—´ï¼‰
 	    CommPort commPort = portIdentifier.open(portName, 2000);
 
-	    // ÅĞ¶ÏÊÇ²»ÊÇ´®¿Ú
+	    // åˆ¤æ–­æ˜¯ä¸æ˜¯ä¸²å£
 	    if (commPort instanceof SerialPort) {
 
 		SerialPort serialPort = (SerialPort) commPort;
 
 		try {
-		    // ÉèÖÃÒ»ÏÂ´®¿ÚµÄ²¨ÌØÂÊµÈ²ÎÊı
+		    // è®¾ç½®ä¸€ä¸‹ä¸²å£çš„æ³¢ç‰¹ç‡ç­‰å‚æ•°
 		    serialPort.setSerialPortParams(baudrate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 			    SerialPort.PARITY_NONE);
 		} catch (UnsupportedCommOperationException e) {
-		    throw new SerialPortException("ÉèÖÃ´®¿Ú²ÎÊıÊ§°Ü£¡´ò¿ª´®¿Ú²Ù×÷Î´Íê³É£¡");
+		    throw new Exception("è®¾ç½®ä¸²å£å‚æ•°å¤±è´¥ï¼æ‰“å¼€ä¸²å£æ“ä½œæœªå®Œæˆï¼");
 		}
 
 		return serialPort;
 	    } else {
-		throw new SerialPortException("²»ÊÇ´®¿Ú£¡");
+		throw new Exception("ä¸æ˜¯ä¸²å£ï¼");
 	    }
 	} catch (NoSuchPortException e1) {
-	    throw new SerialPortException(e1.getMessage());
+	    throw new Exception(e1.getMessage());
 	} catch (PortInUseException e2) {
-	    throw new SerialPortException(e2.getMessage());
+	    throw new Exception(e2.getMessage());
 	}
     }
 
     /**
-     * ¹Ø±Õ´®¿Ú
+     * å…³é—­ä¸²å£
      * 
-     * @param serialport ´ı¹Ø±ÕµÄ´®¿Ú¶ÔÏó
+     * @param serialport å¾…å…³é—­çš„ä¸²å£å¯¹è±¡
      */
     public static void closePort(SerialPort serialPort) {
 	if (serialPort != null) {
@@ -123,12 +123,12 @@ public class SerialTool {
     }
 
     /**
-     * Íù´®¿Ú·¢ËÍÊı¾İ
+     * å¾€ä¸²å£å‘é€æ•°æ®
      * 
-     * @param serialPort ´®¿Ú¶ÔÏó
-     * @param order      ´ı·¢ËÍÊı¾İ
+     * @param serialPort ä¸²å£å¯¹è±¡
+     * @param order      å¾…å‘é€æ•°æ®
      */
-    public static void sendToPort(SerialPort serialPort, byte[] order) throws SerialPortException {
+    public static void sendToPort(SerialPort serialPort, byte[] order) throws Exception {
 
 	OutputStream out = null;
 	try {
@@ -136,7 +136,7 @@ public class SerialTool {
 	    out.write(order);
 	    out.flush();
 	} catch (IOException e) {
-	    throw new SerialPortException("Ïò´®¿Ú·¢ËÍÊı¾İÊ§°Ü");
+	    throw new Exception("å‘ä¸²å£å‘é€æ•°æ®å¤±è´¥");
 	} finally {
 	    try {
 		if (out != null) {
@@ -144,32 +144,32 @@ public class SerialTool {
 		    out = null;
 		}
 	    } catch (IOException e) {
-		throw new SerialPortException("¹Ø±Õ´®¿Ú¶ÔÏóµÄÊä³öÁ÷³ö´í");
+		throw new Exception("å…³é—­ä¸²å£å¯¹è±¡çš„è¾“å‡ºæµå‡ºé”™");
 	    }
 	}
     }
 
     /**
-     * ´Ó´®¿Ú¶ÁÈ¡Êı¾İ
+     * ä»ä¸²å£è¯»å–æ•°æ®
      * 
-     * @param serialPort µ±Ç°ÒÑ½¨Á¢Á¬½ÓµÄSerialPort¶ÔÏó
-     * @return ¶ÁÈ¡µ½µÄÊı¾İ
+     * @param serialPort å½“å‰å·²å»ºç«‹è¿æ¥çš„SerialPortå¯¹è±¡
+     * @return è¯»å–åˆ°çš„æ•°æ®
      */
-    public static byte[] readFromPort(SerialPort serialPort) throws SerialPortException {
+    public static byte[] readFromPort(SerialPort serialPort) throws Exception {
 
 	InputStream in = null;
 	byte[] bytes = null;
 
 	try {
 	    in = serialPort.getInputStream();
-	    int bufflenth = in.available(); // »ñÈ¡bufferÀïµÄÊı¾İ³¤¶È
+	    int bufflenth = in.available(); // è·å–bufferé‡Œçš„æ•°æ®é•¿åº¦
 	    while (bufflenth != 0) {
-		bytes = new byte[bufflenth]; // ³õÊ¼»¯byteÊı×éÎªbufferÖĞÊı¾İµÄ³¤¶È
+		bytes = new byte[bufflenth]; // åˆå§‹åŒ–byteæ•°ç»„ä¸ºbufferä¸­æ•°æ®çš„é•¿åº¦
 		in.read(bytes);
 		bufflenth = in.available();
 	    }
 	} catch (IOException e) {
-	    throw new SerialPortException("´Ó´®¿Ú¶ÁÈ¡Êı¾İÊ±³ö´í");
+	    throw new Exception("ä»ä¸²å£è¯»å–æ•°æ®æ—¶å‡ºé”™");
 	} finally {
 	    try {
 		if (in != null) {
@@ -177,30 +177,30 @@ public class SerialTool {
 		    in = null;
 		}
 	    } catch (IOException e) {
-		throw new SerialPortException("¹Ø±Õ´®¿Ú¶ÔÏóÊäÈëÁ÷³ö´í");
+		throw new Exception("å…³é—­ä¸²å£å¯¹è±¡è¾“å…¥æµå‡ºé”™");
 	    }
 	}
 	return bytes;
     }
 
     /**
-     * Ìí¼Ó¼àÌıÆ÷
+     * æ·»åŠ ç›‘å¬å™¨
      * 
-     * @param port     ´®¿Ú¶ÔÏó
-     * @param listener ´®¿Ú¼àÌıÆ÷
-     * @throws TooManyListeners ¼àÌıÀà¶ÔÏó¹ı¶à
+     * @param port     ä¸²å£å¯¹è±¡
+     * @param listener ä¸²å£ç›‘å¬å™¨
+     * @throws TooManyListeners ç›‘å¬ç±»å¯¹è±¡è¿‡å¤š
      */
-    public static void addListener(SerialPort port, SerialPortEventListener listener) throws SerialPortException {
+    public static void addListener(SerialPort port, SerialPortEventListener listener) throws Exception {
 
 	try {
-	    // ¸ø´®¿ÚÌí¼Ó¼àÌıÆ÷
+	    // ç»™ä¸²å£æ·»åŠ ç›‘å¬å™¨
 	    port.addEventListener(listener);
-	    // ÉèÖÃµ±ÓĞÊı¾İµ½´ïÊ±»½ĞÑ¼àÌı½ÓÊÕÏß³Ì
+	    // è®¾ç½®å½“æœ‰æ•°æ®åˆ°è¾¾æ—¶å”¤é†’ç›‘å¬æ¥æ”¶çº¿ç¨‹
 	    port.notifyOnDataAvailable(true);
-	    // ÉèÖÃµ±Í¨ĞÅÖĞ¶ÏÊ±»½ĞÑÖĞ¶ÏÏß³Ì
+	    // è®¾ç½®å½“é€šä¿¡ä¸­æ–­æ—¶å”¤é†’ä¸­æ–­çº¿ç¨‹
 	    port.notifyOnBreakInterrupt(true);
 	} catch (TooManyListenersException e) {
-	    throw new SerialPortException(e.getMessage());
+	    throw new Exception(e.getMessage());
 	}
     }
 }

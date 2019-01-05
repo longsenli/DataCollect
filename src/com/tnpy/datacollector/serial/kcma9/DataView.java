@@ -18,9 +18,8 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
-import com.tnpy.datacollector.Bytes2HexStr;
-import com.tnpy.datacollector.CRC16;
-import com.tnpy.datacollector.ExceptionWriter;
+import com.tnpy.datacollector.serial.Bytes2HexStr;
+import com.tnpy.datacollector.serial.CRC16;
 import com.tnpy.datacollector.serial.SerialTool;
 
 import gnu.io.SerialPort;
@@ -28,43 +27,43 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
 /**
- * ¼à²âÊı¾İÏÔÊ¾Àà
+ * ç›‘æµ‹æ•°æ®æ˜¾ç¤ºç±»
  */
 public class DataView extends Frame {
 
     private static final long serialVersionUID = 1L;
     Client client;
 
-    private List<String> commList; // ±£´æ¿ÉÓÃ¶Ë¿ÚºÅ
-    private SerialPort serialPort; // ±£´æ´®¿Ú¶ÔÏó
+    private List<String> commList; // ä¿å­˜å¯ç”¨ç«¯å£å·
+    private SerialPort serialPort; // ä¿å­˜ä¸²å£å¯¹è±¡
 
-    // ÅäÖÃÎÄ¼ş
+    // é…ç½®æ–‡ä»¶
     Properties config;
 
-    // 485ÒÇ±íµÄÊıÁ¿
+    // 485ä»ªè¡¨çš„æ•°é‡
     private int num;
     private Label[] arTem;
-    // ×îĞÂÊı¾İÖµ
+    // æœ€æ–°æ•°æ®å€¼
     private float[] lastData;
-    // ¼ÆÊıÆ÷
+    // è®¡æ•°å™¨
     private int counter = 0;
 
-    private Choice commChoice = new Choice(); // ´®¿ÚÑ¡Ôñ£¨ÏÂÀ­¿ò£©
-    private Choice bpsChoice = new Choice(); // ²¨ÌØÂÊÑ¡Ôñ
+    private Choice commChoice = new Choice(); // ä¸²å£é€‰æ‹©ï¼ˆä¸‹æ‹‰æ¡†ï¼‰
+    private Choice bpsChoice = new Choice(); // æ³¢ç‰¹ç‡é€‰æ‹©
 
-    private Button openSerialButton = new Button("´ò¿ª´®¿Ú");
+    private Button openSerialButton = new Button("START");
 
-    Image offScreen; // ÖØ»­Ê±µÄ»­²¼
-    private Font font = new Font("Î¢ÈíÑÅºÚ", Font.BOLD, 25);
+    Image offScreen; // é‡ç”»æ—¶çš„ç”»å¸ƒ
+    private Font font = new Font("å¾®è½¯é›…é»‘", Font.BOLD, 25);
 
     /**
-     * ÀàµÄ¹¹Ôì·½·¨
+     * ç±»çš„æ„é€ æ–¹æ³•
      * 
      * @param client
      */
     public DataView(Client client) {
 	this.client = client;
-	commList = SerialTool.findPort(); // ³ÌĞò³õÊ¼»¯Ê±¾ÍÉ¨ÃèÒ»´ÎÓĞĞ§´®¿Ú
+	commList = SerialTool.findPort(); // ç¨‹åºåˆå§‹åŒ–æ—¶å°±æ‰«æä¸€æ¬¡æœ‰æ•ˆä¸²å£
 
 	try (InputStream is = ClassLoader.getSystemResourceAsStream("com/tnpy/datacollector/config.properties");) {
 	    config = new Properties();
@@ -78,18 +77,18 @@ public class DataView extends Frame {
     }
 
     /**
-     * Ö÷²Ëµ¥´°¿ÚÏÔÊ¾£» Ìí¼ÓLabel¡¢°´Å¥¡¢ÏÂÀ­Ìõ¼°Ïà¹ØÊÂ¼ş¼àÌı£»
+     * ä¸»èœå•çª—å£æ˜¾ç¤ºï¼› æ·»åŠ Labelã€æŒ‰é’®ã€ä¸‹æ‹‰æ¡åŠç›¸å…³äº‹ä»¶ç›‘å¬ï¼›
      */
     public void dataFrame() {
 	this.setBounds(client.LOC_X, client.LOC_Y, client.WIDTH, client.HEIGHT);
-	this.setTitle("´®¿ÚÊı¾İ²É¼¯");
+	this.setTitle("ä¸²å£æ•°æ®é‡‡é›†");
 	this.setBackground(Color.white);
 	this.setLayout(null);
 
 	this.addWindowListener(new WindowAdapter() {
 	    public void windowClosing(WindowEvent arg0) {
 		if (serialPort != null) {
-		    // ³ÌĞòÍË³öÊ±¹Ø±Õ´®¿ÚÊÍ·Å×ÊÔ´
+		    // ç¨‹åºé€€å‡ºæ—¶å…³é—­ä¸²å£é‡Šæ”¾èµ„æº
 		    SerialTool.closePort(serialPort);
 		}
 		System.exit(0);
@@ -99,7 +98,7 @@ public class DataView extends Frame {
 	for (int i = 0; i < num; i++) {
 	    int x = 140 + (i % 3) * 380;
 	    int y = 60 + 70 * Math.round(i / 3);
-	    arTem[i] = new Label("ÔİÎŞÊı¾İ", Label.CENTER);
+	    arTem[i] = new Label("", Label.CENTER);
 	    arTem[i].setBounds(x, y, 225, 40);
 	    arTem[i].setBackground(Color.black);
 	    arTem[i].setFont(font);
@@ -107,11 +106,11 @@ public class DataView extends Frame {
 	    add(arTem[i]);
 	}
 
-	// Ìí¼Ó´®¿ÚÑ¡ÔñÑ¡Ïî
+	// æ·»åŠ ä¸²å£é€‰æ‹©é€‰é¡¹
 	commChoice.setBounds(160, 770, 200, 200);
-	// ¼ì²éÊÇ·ñÓĞ¿ÉÓÃ´®¿Ú£¬ÓĞÔò¼ÓÈëÑ¡ÏîÖĞ
+	// æ£€æŸ¥æ˜¯å¦æœ‰å¯ç”¨ä¸²å£ï¼Œæœ‰åˆ™åŠ å…¥é€‰é¡¹ä¸­
 	if (commList == null || commList.size() < 1) {
-	    JOptionPane.showMessageDialog(null, "Ã»ÓĞËÑË÷µ½ÓĞĞ§´®¿Ú£¡", "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(null, "æ²¡æœ‰æœç´¢åˆ°æœ‰æ•ˆä¸²å£ï¼", "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 	} else {
 	    for (String s : commList) {
 		commChoice.add(s);
@@ -119,7 +118,7 @@ public class DataView extends Frame {
 	}
 	add(commChoice);
 
-	// Ìí¼Ó²¨ÌØÂÊÑ¡Ïî
+	// æ·»åŠ æ³¢ç‰¹ç‡é€‰é¡¹
 	bpsChoice.setBounds(526, 770, 200, 200);
 	bpsChoice.add("1200");
 	bpsChoice.add("2400");
@@ -130,57 +129,57 @@ public class DataView extends Frame {
 	bpsChoice.add("115200");
 	add(bpsChoice);
 
-	// Ìí¼Ó´ò¿ª´®¿Ú°´Å¥
+	// æ·»åŠ æ‰“å¼€ä¸²å£æŒ‰é’®
 	openSerialButton.setBounds(900, 760, 225, 40);
 	openSerialButton.setBackground(Color.lightGray);
-	openSerialButton.setFont(new Font("Î¢ÈíÑÅºÚ", Font.BOLD, 20));
+	openSerialButton.setFont(new Font("å¾®è½¯é›…é»‘", Font.BOLD, 20));
 	openSerialButton.setForeground(Color.darkGray);
 	add(openSerialButton);
-	// Ìí¼Ó´ò¿ª´®¿Ú°´Å¥µÄÊÂ¼ş¼àÌı
+	// æ·»åŠ æ‰“å¼€ä¸²å£æŒ‰é’®çš„äº‹ä»¶ç›‘å¬
 	openSerialButton.addActionListener(new ActionListener() {
 
 	    public void actionPerformed(ActionEvent e) {
 
-		// »ñÈ¡´®¿ÚÃû³Æ
+		// è·å–ä¸²å£åç§°
 		String commName = commChoice.getSelectedItem();
-		// »ñÈ¡²¨ÌØÂÊ
+		// è·å–æ³¢ç‰¹ç‡
 		String bpsStr = bpsChoice.getSelectedItem();
 
-		// ¼ì²é´®¿ÚÃû³ÆÊÇ·ñ»ñÈ¡ÕıÈ·
+		// æ£€æŸ¥ä¸²å£åç§°æ˜¯å¦è·å–æ­£ç¡®
 		if (commName == null || commName.equals("")) {
-		    JOptionPane.showMessageDialog(null, "Ã»ÓĞËÑË÷µ½ÓĞĞ§´®¿Ú£¡", "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+		    JOptionPane.showMessageDialog(null, "æ²¡æœ‰æœç´¢åˆ°æœ‰æ•ˆä¸²å£ï¼", "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 		} else {
-		    // ¼ì²é²¨ÌØÂÊÊÇ·ñ»ñÈ¡ÕıÈ·
+		    // æ£€æŸ¥æ³¢ç‰¹ç‡æ˜¯å¦è·å–æ­£ç¡®
 		    if (bpsStr == null || bpsStr.equals("")) {
-			JOptionPane.showMessageDialog(null, "²¨ÌØÂÊ»ñÈ¡´íÎó£¡", "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "æ³¢ç‰¹ç‡è·å–é”™è¯¯ï¼", "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 		    } else {
-			// ´®¿ÚÃû¡¢²¨ÌØÂÊ¾ù»ñÈ¡ÕıÈ·Ê±
+			// ä¸²å£åã€æ³¢ç‰¹ç‡å‡è·å–æ­£ç¡®æ—¶
 			int bps = Integer.parseInt(bpsStr);
 			try {
-			    // »ñÈ¡Ö¸¶¨¶Ë¿ÚÃû¼°²¨ÌØÂÊµÄ´®¿Ú¶ÔÏó
+			    // è·å–æŒ‡å®šç«¯å£ååŠæ³¢ç‰¹ç‡çš„ä¸²å£å¯¹è±¡
 			    serialPort = SerialTool.openPort(commName, bps);
-			    // ÔÚ¸Ã´®¿Ú¶ÔÏóÉÏÌí¼Ó¼àÌıÆ÷
+			    // åœ¨è¯¥ä¸²å£å¯¹è±¡ä¸Šæ·»åŠ ç›‘å¬å™¨
 			    SerialTool.addListener(serialPort, new SerialListener());
-			    // ¼àÌı³É¹¦½øĞĞÌáÊ¾
-			    JOptionPane.showMessageDialog(null, "¼àÌı³É¹¦£¬ÉÔºó½«ÏÔÊ¾¼à²âÊı¾İ£¡", "ÌáÊ¾",
+			    // ç›‘å¬æˆåŠŸè¿›è¡Œæç¤º
+			    JOptionPane.showMessageDialog(null, "ç›‘å¬æˆåŠŸï¼Œç¨åå°†æ˜¾ç¤ºç›‘æµ‹æ•°æ®ï¼", "æç¤º",
 				    JOptionPane.INFORMATION_MESSAGE);
-			    // Æô¶¯¶¨Ê±ÇëÇóÊı¾İµÄÏß³Ì.ÓàÒ¦¾«´´ÒÇ±íÓĞÏŞ¹«Ë¾ KCM-91WRSÎÂ¶È±äËÍÆ÷
+			    // å¯åŠ¨å®šæ—¶è¯·æ±‚æ•°æ®çš„çº¿ç¨‹.ä½™å§šç²¾åˆ›ä»ªè¡¨æœ‰é™å…¬å¸ KCM-91WRSæ¸©åº¦å˜é€å™¨
 			    new Thread() {
 				public void run() {
 				    while (true) {
 					try {
-					    // ¶¨ÆÚÇëÇóÊı¾İ
+					    // å®šæœŸè¯·æ±‚æ•°æ®
 					    String[] address = { "01", "02", "03", "04", "05", "06", "07", "08", "09",
 						    "0A", "0B", "0C", "0D", "0E", "0F", "10", "11", "12", "13", "14",
 						    "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
 						    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A" };
 					    for (int i = 0; i < num; i++) {
-						// ¶ÁÊµÊ±ÎÂ¶ÈÃüÁî
+						// è¯»å®æ—¶æ¸©åº¦å‘½ä»¤
 						String halfOrder = address[i] + "0310010001";
 						String crc = CRC16.getCRC(Bytes2HexStr.toBytes(halfOrder));
 						byte[] order = Bytes2HexStr.toBytes(halfOrder + crc);
 						SerialTool.sendToPort(serialPort, order);
-						// µÈ´ıÒ»¸öÊı¾İ´¦Àíºó£¬ÔÙÇëÇóÏÂÒ»¸öÊı¾İ
+						// ç­‰å¾…ä¸€ä¸ªæ•°æ®å¤„ç†åï¼Œå†è¯·æ±‚ä¸‹ä¸€ä¸ªæ•°æ®
 						sleep(1000);
 					    }
 					} catch (Exception e) {
@@ -197,31 +196,29 @@ public class DataView extends Frame {
 	    }
 	});
 	this.setResizable(false);
-	new Thread(new RepaintThread()).start(); // Æô¶¯ÖØ»­Ïß³Ì
+	new Thread(new RepaintThread()).start(); // å¯åŠ¨é‡ç”»çº¿ç¨‹
     }
 
     /**
-     * »­³öÖ÷½çÃæ×é¼şÔªËØ
+     * ç”»å‡ºä¸»ç•Œé¢ç»„ä»¶å…ƒç´ 
      */
     public void paint(Graphics g) {
 	Color c = g.getColor();
 	g.setColor(Color.black);
-	g.setFont(new Font("Î¢ÈíÑÅºÚ", Font.BOLD, 25));
+	g.setFont(new Font("å¾®è½¯é›…é»‘", Font.BOLD, 25));
 	for (int i = 0; i < num; i++) {
 	    int x = 45 + (i % 3) * 380;
 	    int y = 80 + 70 * Math.round(i / 3);
-	    g.drawString("ÎÂ¶È" + (i + 1) + ":", x, y);
+	    g.drawString("æ¸©åº¦" + (i + 1) + ":", x, y);
 	}
 	g.setColor(Color.gray);
-	g.setFont(new Font("Î¢ÈíÑÅºÚ", Font.BOLD, 20));
-	g.drawString(" ´®¿ÚÑ¡Ôñ£º ", 45, 780);
-	g.setColor(Color.gray);
-	g.setFont(new Font("Î¢ÈíÑÅºÚ", Font.BOLD, 20));
-	g.drawString(" ²¨ÌØÂÊ£º ", 425, 780);
+	g.setFont(new Font("å¾®è½¯é›…é»‘", Font.BOLD, 20));
+	g.drawString(" ä¸²å£é€‰æ‹©ï¼š ", 45, 780);
+	g.drawString(" æ³¢ç‰¹ç‡ï¼š ", 425, 780);
     }
 
     /**
-     * Ë«»º³å·½Ê½ÖØ»­½çÃæ¸÷ÔªËØ×é¼ş
+     * åŒç¼“å†²æ–¹å¼é‡ç”»ç•Œé¢å„å…ƒç´ ç»„ä»¶
      */
     public void update(Graphics g) {
 	if (offScreen == null)
@@ -229,48 +226,48 @@ public class DataView extends Frame {
 	Graphics gOffScreen = offScreen.getGraphics();
 	Color c = gOffScreen.getColor();
 	gOffScreen.setColor(Color.white);
-	gOffScreen.fillRect(0, 0, Client.WIDTH, Client.HEIGHT); // ÖØ»­±³¾°»­²¼
-	this.paint(gOffScreen); // ÖØ»­½çÃæÔªËØ
+	gOffScreen.fillRect(0, 0, Client.WIDTH, Client.HEIGHT); // é‡ç”»èƒŒæ™¯ç”»å¸ƒ
+	this.paint(gOffScreen); // é‡ç”»ç•Œé¢å…ƒç´ 
 	gOffScreen.setColor(c);
-	g.drawImage(offScreen, 0, 0, null); // ½«ĞÂ»­ºÃµÄ»­²¼¡°Ìù¡±ÔÚÔ­»­²¼ÉÏ
+	g.drawImage(offScreen, 0, 0, null); // å°†æ–°ç”»å¥½çš„ç”»å¸ƒâ€œè´´â€åœ¨åŸç”»å¸ƒä¸Š
     }
 
     /*
-     * ÖØ»­Ïß³Ì£¨Ã¿¸ô30ºÁÃëÖØ»­Ò»´Î£©
+     * é‡ç”»çº¿ç¨‹ï¼ˆæ¯éš”30æ¯«ç§’é‡ç”»ä¸€æ¬¡ï¼‰
      */
     private class RepaintThread implements Runnable {
 	public void run() {
 	    while (true) {
-		// µ÷ÓÃÖØ»­·½·¨
+		// è°ƒç”¨é‡ç”»æ–¹æ³•
 		repaint();
 
-		// É¨Ãè¿ÉÓÃ´®¿Ú
+		// æ‰«æå¯ç”¨ä¸²å£
 		commList = SerialTool.findPort();
 		if (commList != null && commList.size() > 0) {
 
-		    // Ìí¼ÓĞÂÉ¨Ãèµ½µÄ¿ÉÓÃ´®¿Ú
+		    // æ·»åŠ æ–°æ‰«æåˆ°çš„å¯ç”¨ä¸²å£
 		    for (String s : commList) {
-			// ¸Ã´®¿ÚÃûÊÇ·ñÒÑ´æÔÚ£¬³õÊ¼Ä¬ÈÏÎª²»´æÔÚ£¨ÔÚcommListÀï´æÔÚµ«ÔÚcommChoiceÀï²»´æÔÚ£¬ÔòĞÂÌí¼Ó£©
+			// è¯¥ä¸²å£åæ˜¯å¦å·²å­˜åœ¨ï¼Œåˆå§‹é»˜è®¤ä¸ºä¸å­˜åœ¨ï¼ˆåœ¨commListé‡Œå­˜åœ¨ä½†åœ¨commChoiceé‡Œä¸å­˜åœ¨ï¼Œåˆ™æ–°æ·»åŠ ï¼‰
 			boolean commExist = false;
 
 			for (int i = 0; i < commChoice.getItemCount(); i++) {
 			    if (s.equals(commChoice.getItem(i))) {
-				// µ±Ç°É¨Ãèµ½µÄ´®¿ÚÃûÒÑ¾­ÔÚ³õÊ¼É¨ÃèÊ±´æÔÚ
+				// å½“å‰æ‰«æåˆ°çš„ä¸²å£åå·²ç»åœ¨åˆå§‹æ‰«ææ—¶å­˜åœ¨
 				commExist = true;
 				break;
 			    }
 			}
 			if (commExist) {
-			    // µ±Ç°É¨Ãèµ½µÄ´®¿ÚÃûÒÑ¾­ÔÚ³õÊ¼É¨ÃèÊ±´æÔÚ£¬Ö±½Ó½øÈëÏÂÒ»´ÎÑ­»·
+			    // å½“å‰æ‰«æåˆ°çš„ä¸²å£åå·²ç»åœ¨åˆå§‹æ‰«ææ—¶å­˜åœ¨ï¼Œç›´æ¥è¿›å…¥ä¸‹ä¸€æ¬¡å¾ªç¯
 			    continue;
 			} else {
-			    // Èô²»´æÔÚÔòÌí¼ÓĞÂ´®¿ÚÃûÖÁ¿ÉÓÃ´®¿ÚÏÂÀ­ÁĞ±í
+			    // è‹¥ä¸å­˜åœ¨åˆ™æ·»åŠ æ–°ä¸²å£åè‡³å¯ç”¨ä¸²å£ä¸‹æ‹‰åˆ—è¡¨
 			    commChoice.add(s);
 			}
 		    }
-		    // ÒÆ³ıÒÑ¾­²»¿ÉÓÃµÄ´®¿Ú
+		    // ç§»é™¤å·²ç»ä¸å¯ç”¨çš„ä¸²å£
 		    for (int i = 0; i < commChoice.getItemCount(); i++) {
-			// ¸Ã´®¿ÚÊÇ·ñÒÑÊ§Ğ§£¬³õÊ¼Ä¬ÈÏÎªÒÑ¾­Ê§Ğ§£¨ÔÚcommChoiceÀï´æÔÚµ«ÔÚcommListÀï²»´æÔÚ£¬ÔòÒÑ¾­Ê§Ğ§£©
+			// è¯¥ä¸²å£æ˜¯å¦å·²å¤±æ•ˆï¼Œåˆå§‹é»˜è®¤ä¸ºå·²ç»å¤±æ•ˆï¼ˆåœ¨commChoiceé‡Œå­˜åœ¨ä½†åœ¨commListé‡Œä¸å­˜åœ¨ï¼Œåˆ™å·²ç»å¤±æ•ˆï¼‰
 			boolean commNotExist = true;
 
 			for (String s : commList) {
@@ -286,14 +283,13 @@ public class DataView extends Frame {
 			}
 		    }
 		} else {
-		    // Èç¹ûÉ¨Ãèµ½µÄcommListÎª¿Õ£¬ÔòÒÆ³ıËùÓĞÒÑÓĞ´®¿Ú
+		    // å¦‚æœæ‰«æåˆ°çš„commListä¸ºç©ºï¼Œåˆ™ç§»é™¤æ‰€æœ‰å·²æœ‰ä¸²å£
 		    commChoice.removeAll();
 		}
 		try {
 		    Thread.sleep(30);
 		} catch (InterruptedException e) {
-		    String err = ExceptionWriter.getErrorInfoFromException(e);
-		    JOptionPane.showMessageDialog(null, err, "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+		    JOptionPane.showMessageDialog(null, e.getMessage(), "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 		    System.exit(0);
 		}
 	    }
@@ -301,58 +297,58 @@ public class DataView extends Frame {
     }
 
     /**
-     * ÒÔÄÚ²¿ÀàĞÎÊ½´´½¨Ò»¸ö´®¿Ú¼àÌıÀà
+     * ä»¥å†…éƒ¨ç±»å½¢å¼åˆ›å»ºä¸€ä¸ªä¸²å£ç›‘å¬ç±»
      */
     private class SerialListener implements SerialPortEventListener {
 
 	/**
-	 * ´¦Àí¼à¿Øµ½µÄ´®¿ÚÊÂ¼ş
+	 * å¤„ç†ç›‘æ§åˆ°çš„ä¸²å£äº‹ä»¶
 	 */
 	public void serialEvent(SerialPortEvent serialPortEvent) {
 	    try {
-		// µÈ´ıÊı¾İÈ«²¿µ½Î»¡£
+		// ç­‰å¾…æ•°æ®å…¨éƒ¨åˆ°ä½ã€‚
 		Thread.sleep(100);
 	    } catch (InterruptedException e1) {
 		e1.printStackTrace();
 	    }
 	    switch (serialPortEvent.getEventType()) {
-	    case SerialPortEvent.BI: // 10 Í¨Ñ¶ÖĞ¶Ï
-		JOptionPane.showMessageDialog(null, "Óë´®¿ÚÉè±¸Í¨Ñ¶ÖĞ¶Ï", "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+	    case SerialPortEvent.BI: // 10 é€šè®¯ä¸­æ–­
+		JOptionPane.showMessageDialog(null, "ä¸ä¸²å£è®¾å¤‡é€šè®¯ä¸­æ–­", "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 		break;
-	    case SerialPortEvent.OE: // 7 ÒçÎ»£¨Òç³ö£©´íÎó
-	    case SerialPortEvent.FE: // 9 Ö¡´íÎó
-	    case SerialPortEvent.PE: // 8 ÆæÅ¼Ğ£Ñé´íÎó
-	    case SerialPortEvent.CD: // 6 ÔØ²¨¼ì²â
-	    case SerialPortEvent.CTS: // 3 Çå³ı´ı·¢ËÍÊı¾İ
-	    case SerialPortEvent.DSR: // 4 ´ı·¢ËÍÊı¾İ×¼±¸ºÃÁË
-	    case SerialPortEvent.RI: // 5 ÕñÁåÖ¸Ê¾
-	    case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 2 Êä³ö»º³åÇøÒÑÇå¿Õ
+	    case SerialPortEvent.OE: // 7 æº¢ä½ï¼ˆæº¢å‡ºï¼‰é”™è¯¯
+	    case SerialPortEvent.FE: // 9 å¸§é”™è¯¯
+	    case SerialPortEvent.PE: // 8 å¥‡å¶æ ¡éªŒé”™è¯¯
+	    case SerialPortEvent.CD: // 6 è½½æ³¢æ£€æµ‹
+	    case SerialPortEvent.CTS: // 3 æ¸…é™¤å¾…å‘é€æ•°æ®
+	    case SerialPortEvent.DSR: // 4 å¾…å‘é€æ•°æ®å‡†å¤‡å¥½äº†
+	    case SerialPortEvent.RI: // 5 æŒ¯é“ƒæŒ‡ç¤º
+	    case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 2 è¾“å‡ºç¼“å†²åŒºå·²æ¸…ç©º
 		break;
-	    case SerialPortEvent.DATA_AVAILABLE: // 1 ´®¿Ú´æÔÚ¿ÉÓÃÊı¾İ
+	    case SerialPortEvent.DATA_AVAILABLE: // 1 ä¸²å£å­˜åœ¨å¯ç”¨æ•°æ®
 		byte[] data = null;
 		try {
 		    if (serialPort == null) {
-			JOptionPane.showMessageDialog(null, "´®¿Ú¶ÔÏóÎª¿Õ£¡¼àÌıÊ§°Ü£¡", "´íÎó", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "ä¸²å£å¯¹è±¡ä¸ºç©ºï¼ç›‘å¬å¤±è´¥ï¼", "é”™è¯¯", JOptionPane.INFORMATION_MESSAGE);
 		    } else {
-			data = SerialTool.readFromPort(serialPort); // ¶ÁÈ¡Êı¾İ£¬´æÈë×Ö½ÚÊı×é
+			data = SerialTool.readFromPort(serialPort); // è¯»å–æ•°æ®ï¼Œå­˜å…¥å­—èŠ‚æ•°ç»„
 
-			// ÓàÒ¦¾«´´ÒÇ±íÓĞÏŞ¹«Ë¾ KCM-91WRSÎÂ¶È±äËÍÆ÷
-			if (data == null || data.length != 7) { // ¼ì²éÊı¾İÊÇ·ñ¶ÁÈ¡ÕıÈ·
-			    System.out.println("¶ÁÈ¡Êı¾İ¹ı³ÌÖĞÎ´»ñÈ¡µ½ÓĞĞ§Êı¾İ");
+			// ä½™å§šç²¾åˆ›ä»ªè¡¨æœ‰é™å…¬å¸ KCM-91WRSæ¸©åº¦å˜é€å™¨
+			if (data == null || data.length != 7) { // æ£€æŸ¥æ•°æ®æ˜¯å¦è¯»å–æ­£ç¡®
+			    System.out.println("è¯»å–æ•°æ®è¿‡ç¨‹ä¸­æœªè·å–åˆ°æœ‰æ•ˆæ•°æ®");
 			} else {
-			    // CRCĞ£Ñé
+			    // CRCæ ¡éªŒ
 			    String strData = Bytes2HexStr.bytesToHexFun1(data);
 			    String crc1 = strData.substring(10);
 			    byte[] partData = new byte[5];
 			    System.arraycopy(data, 0, partData, 0, 5);
 			    String crc2 = CRC16.getCRC(partData);
 			    if (!crc1.equalsIgnoreCase(crc2)) {
-				System.out.println("½ÓÊÕÊı¾İCRC¼ìÑé´íÎó");
+				System.out.println("æ¥æ”¶æ•°æ®CRCæ£€éªŒé”™è¯¯");
 			    } else {
 				try {
-				    // ½âÎöÊı¾İ,ÒÀ¾İÎÂ¶È±íµÄĞ­Òé
+				    // è§£ææ•°æ®,ä¾æ®æ¸©åº¦è¡¨çš„åè®®
 				    int address = Bytes2HexStr.getInt1(data, 0);
-				    // Êı¾İ³¤¶È1byte»ò2byte
+				    // æ•°æ®é•¿åº¦1byteæˆ–2byte
 				    String dataLength = strData.substring(4, 6);
 				    float temp = (float) 0;
 				    if (dataLength.equals("01")) {
@@ -360,18 +356,18 @@ public class DataView extends Frame {
 				    } else if (dataLength.equals("02")) {
 					temp = (float) Bytes2HexStr.getInt2(data, 3) / (float) 10;
 				    }
-				    // ¸üĞÂ½çÃæLabelÖµ(ÒÇ±íµÄµØÖ·´Ó1¿ªÊ¼£¬label±àºÅ´Ó0¿ªÊ¼£¬´Ë´¦Òª¼õ1)
-				    arTem[address - 1].setText(temp + " ¡æ");
+				    // æ›´æ–°ç•Œé¢Labelå€¼(ä»ªè¡¨çš„åœ°å€ä»1å¼€å§‹ï¼Œlabelç¼–å·ä»0å¼€å§‹ï¼Œæ­¤å¤„è¦å‡1)
+				    arTem[address - 1].setText(String.valueOf(temp));
 
-				    // ±£´æ×îĞÂÊı¾İ
+				    // ä¿å­˜æœ€æ–°æ•°æ®
 				    lastData[address - 1] = temp;
 				    counter++;
-				    if (counter > 300) {// ´óÔ¼1ÃëÖÓ¶ÁÒ»´ÎÊı¾İ£¬300´Î´óÔ¼ÊÇ5·ÖÖÓ
+				    if (counter > 300) {// å¤§çº¦1ç§’é’Ÿè¯»ä¸€æ¬¡æ•°æ®ï¼Œ300æ¬¡å¤§çº¦æ˜¯5åˆ†é’Ÿ
 					counter = 0;
 					new StoringData(lastData, config).start();
 				    }
 				} catch (ArrayIndexOutOfBoundsException e) {
-				    System.out.println("Êı¾İ½âÎö¹ı³Ì³ö´í£¬¸üĞÂ½çÃæÊı¾İÊ§°Ü£¡");
+				    System.out.println("æ•°æ®è§£æè¿‡ç¨‹å‡ºé”™ï¼Œæ›´æ–°ç•Œé¢æ•°æ®å¤±è´¥ï¼");
 				}
 			    }
 			}

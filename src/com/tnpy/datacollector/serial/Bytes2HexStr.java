@@ -1,27 +1,18 @@
-package com.tnpy.datacollector;
+package com.tnpy.datacollector.serial;
 
-import java.util.Arrays;
-
-/**
- * byte[]Óë16½øÖÆ×Ö·û´®Ïà»¥×ª»»
- */
 public class Bytes2HexStr {
 
     private static final char[] HEX_CHAR = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
 	    'f' };
 
-    /**
-     * ·½·¨Ò»£º byte[] to hex string
-     * 
-     * @param bytes
-     * @return
+    /*
+     * byteæ•°ç»„è½¬16è¿›åˆ¶å­—ç¬¦ä¸² .ä¸‰ä¸ªæ–¹æ³•åŠŸèƒ½ç›¸åŒ.
      */
     public static String bytesToHexFun1(byte[] bytes) {
-	// Ò»¸öbyteÎª8Î»£¬¿ÉÓÃÁ½¸öÊ®Áù½øÖÆÎ»±êÊ¶
 	char[] buf = new char[bytes.length * 2];
 	int a = 0;
 	int index = 0;
-	for (byte b : bytes) { // Ê¹ÓÃ³ıÓëÈ¡Óà½øĞĞ×ª»»
+	for (byte b : bytes) {
 	    if (b < 0) {
 		a = 256 + b;
 	    } else {
@@ -35,16 +26,10 @@ public class Bytes2HexStr {
 	return new String(buf);
     }
 
-    /**
-     * ·½·¨¶ş£º byte[] to hex string
-     * 
-     * @param bytes
-     * @return
-     */
     public static String bytesToHexFun2(byte[] bytes) {
 	char[] buf = new char[bytes.length * 2];
 	int index = 0;
-	for (byte b : bytes) { // ÀûÓÃÎ»ÔËËã½øĞĞ×ª»»£¬¿ÉÒÔ¿´×÷·½·¨Ò»µÄ±äÖÖ
+	for (byte b : bytes) {
 	    buf[index++] = HEX_CHAR[b >>> 4 & 0xf];
 	    buf[index++] = HEX_CHAR[b & 0xf];
 	}
@@ -52,26 +37,17 @@ public class Bytes2HexStr {
 	return new String(buf);
     }
 
-    /**
-     * ·½·¨Èı£º byte[] to hex string
-     * 
-     * @param bytes
-     * @return
-     */
     public static String bytesToHexFun3(byte[] bytes) {
 	StringBuilder buf = new StringBuilder(bytes.length * 2);
-	for (byte b : bytes) { // Ê¹ÓÃStringµÄformat·½·¨½øĞĞ×ª»»
+	for (byte b : bytes) {
 	    buf.append(String.format("%02x", new Integer(b & 0xff)));
 	}
 
 	return buf.toString();
     }
 
-    /**
-     * ½«16½øÖÆ×Ö·û´®×ª»»Îªbyte[]
-     * 
-     * @param str
-     * @return
+    /*
+     * 16è¿›åˆ¶å­—ç¬¦ä¸²è½¬byteæ•°ç»„
      */
     public static byte[] toBytes(String str) {
 	if (str == null || str.trim().equals("")) {
@@ -87,33 +63,19 @@ public class Bytes2HexStr {
 	return bytes;
     }
 
-    // ´ÓbyteÊı×éµÄindex´¦µÄÁ¬Ğø1¸ö×Ö½Ú»ñµÃÒ»¸öint
+    /*
+     * byteæ•°ç»„ä¸­æå–æ•´æ•°ï¼Œåˆ†åˆ«ä»1ã€2ã€4ä¸ªbyteä¸­å–ã€‚
+     */
     public static int getInt1(byte[] arr, int index) {
 	return (0x00ff & arr[index]);
     }
-    
-    // ´ÓbyteÊı×éµÄindex´¦µÄÁ¬Ğø2¸ö×Ö½Ú»ñµÃÒ»¸öint
+
     public static int getInt2(byte[] arr, int index) {
 	return (0xff00 & (arr[index] << 8)) | (0x00ff & arr[index + 1]);
     }
-    
-    // ´ÓbyteÊı×éµÄindex´¦µÄÁ¬Ğø4¸ö×Ö½Ú»ñµÃÒ»¸öint
+
     public static int getInt4(byte[] arr, int index) {
 	return (0xff000000 & (arr[index + 0] << 24)) | (0x00ff0000 & (arr[index + 1] << 16))
 		| (0x0000ff00 & (arr[index + 2] << 8)) | (0x000000ff & arr[index + 3]);
-    }
-
-    public static void main(String[] args) throws Exception {
-	byte[] bytes = "²âÊÔ".getBytes("utf-8");
-	System.out.println("×Ö½ÚÊı×éÎª£º" + Arrays.toString(bytes));
-	System.out.println("·½·¨Ò»£º" + bytesToHexFun1(bytes));
-	System.out.println("·½·¨¶ş£º" + bytesToHexFun2(bytes));
-	System.out.println("·½·¨Èı£º" + bytesToHexFun3(bytes));
-
-	System.out.println("==================================");
-
-	String str = "e6b58be8af95";
-	System.out.println("×ª»»ºóµÄ×Ö½ÚÊı×é£º" + Arrays.toString(toBytes(str)));
-	System.out.println(new String(toBytes(str), "utf-8"));
     }
 }

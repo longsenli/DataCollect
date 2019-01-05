@@ -1,13 +1,7 @@
-package com.tnpy.datacollector;
+package com.tnpy.datacollector.serial;
 
 public class CRC16 {
 
-    /**
-     * ¼ÆËãCRC16Ð£ÑéÂë
-     *
-     * @param bytes
-     * @return
-     */
     public static String getCRC(byte[] bytes) {
 	int CRC = 0x0000ffff;
 	int POLYNOMIAL = 0x0000a001;
@@ -24,8 +18,8 @@ public class CRC16 {
 		}
 	    }
 	}
-	// ¸ßµÍÎ»×ª»»£¬¿´Çé¿öÊ¹ÓÃ
-	 CRC = ( (CRC & 0x0000FF00) >> 8) | ( (CRC & 0x000000FF ) << 8);
+	// é«˜ä½Žä½äº’æ¢
+	CRC = ((CRC & 0x0000FF00) >> 8) | ((CRC & 0x000000FF) << 8);
 	return Integer.toHexString(CRC);
     }
 }

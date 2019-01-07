@@ -21,14 +21,12 @@ import gnu.io.UnsupportedCommOperationException;
 public class SerialTool {
 
     private static SerialTool serialTool = null;
-
     static {
 	// 在该类被ClassLoader加载时就初始化一个SerialTool对象
 	if (serialTool == null) {
 	    serialTool = new SerialTool();
 	}
     }
-
     // 私有化SerialTool类的构造方法，不允许其他类生成SerialTool对象
     private SerialTool() {
     }
@@ -77,15 +75,11 @@ public class SerialTool {
      * @throws PortInUse           端口已被占用
      */
     public static final SerialPort openPort(String portName, int baudrate) throws Exception {
-
 	try {
-
 	    // 通过端口名识别端口
 	    CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-
 	    // 打开端口，并给端口名字和一个timeout（打开操作的超时时间）
 	    CommPort commPort = portIdentifier.open(portName, 2000);
-
 	    // 判断是不是串口
 	    if (commPort instanceof SerialPort) {
 
@@ -159,7 +153,6 @@ public class SerialTool {
 
 	InputStream in = null;
 	byte[] bytes = null;
-
 	try {
 	    in = serialPort.getInputStream();
 	    int bufflenth = in.available(); // 获取buffer里的数据长度
@@ -191,7 +184,6 @@ public class SerialTool {
      * @throws TooManyListeners 监听类对象过多
      */
     public static void addListener(SerialPort port, SerialPortEventListener listener) throws Exception {
-
 	try {
 	    // 给串口添加监听器
 	    port.addEventListener(listener);

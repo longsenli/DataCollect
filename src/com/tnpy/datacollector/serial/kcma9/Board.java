@@ -1,7 +1,6 @@
 package com.tnpy.datacollector.serial.kcma9;
 
 import java.awt.Button;
-import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
@@ -12,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -28,32 +28,39 @@ import gnu.io.SerialPortEventListener;
  */
 public class Board extends Frame {
 
-    private static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
     Monitor client;
 
-    private List<String> commList; // 保存可用端口号
-    private SerialPort serialPort; // 保存串口对象
-
+    // 通信波特率
+    static final int bps = 9600;
+    // 串口列表
+    List<String> commList = new ArrayList<String>(6);
     // 485仪表的数量
-    private int num = 30;
-    private Label[] arTem = new Label[30];
-
-    private Choice commChoice = new Choice(); // 串口选择（下拉框）
-    private Choice bpsChoice = new Choice(); // 波特率选择
-
-    private Button openSerialButton = new Button("START");
-
-    Image offScreen; // 重画时的画布
-    private Font font = new Font("微软雅黑", Font.BOLD, 25);
+    int num = 147;
+    int CDNum = 138;// 充电的仪表
+    int SZGZNum = 9;// 树脂干燥的仪表
+    // 界面显示小窗口
+    Label[] arTem = new Label[147];
+    // 串口对应的仪表数
+    int[] numList = { 30, 27, 27, 27, 27, 9 };
+    // 串口对象列表
+    List<SerialPort> serialPortList = new ArrayList<SerialPort>(6);
+    // 启动按钮
+    Button openSerialButton = new Button("START");
+    // 重画时的画布
+    Image offScreen;
 
     /**
      * 类的构造方法
-     * 
-     * @param client
      */
     public Board(Monitor client) {
 	this.client = client;
-	commList = SerialTool.findPort(); // 程序初始化时就扫描一次有效串口
+	commList.add("COM4");
+	commList.add("COM5");
+	commList.add("COM6");
+	commList.add("COM7");
+	commList.add("COM8");
+	commList.add("COM9");
     }
 
     /**
@@ -61,110 +68,67 @@ public class Board extends Frame {
      */
     @SuppressWarnings("deprecation")
     public void dataFrame() {
-	this.setBounds(client.LOC_X, client.LOC_Y, client.WIDTH, client.HEIGHT);
+	this.setBounds(Monitor.LOC_X, Monitor.LOC_Y, Monitor.WIDTH, Monitor.HEIGHT);
 	this.setTitle("实时数据监控");
 	this.setBackground(Color.white);
 	this.setLayout(null);
 
 	this.addWindowListener(new WindowAdapter() {
 	    public void windowClosing(WindowEvent arg0) {
-		if (serialPort != null) {
+		if (serialPortList != null) {
 		    // 程序退出时关闭串口释放资源
-		    SerialTool.closePort(serialPort);
+		    for (SerialPort serialPort : serialPortList) {
+			SerialTool.closePort(serialPort);
+		    }
 		}
 		System.exit(0);
 	    }
 	});
 
-	for (int i = 0; i < num; i++) {
-	    int x = 140 + (i % 3) * 380;
-	    int y = 60 + 70 * Math.round(i / 3);
+	// 显示充电温度
+	for (int i = 0; i < CDNum; i++) {
+	    int x = 70 + (i % 12) * 125;
+	    int y = 100 + 50 * Math.round(i / 12);
 	    arTem[i] = new Label("", Label.CENTER);
-	    arTem[i].setBounds(x, y, 225, 40);
+	    arTem[i].setBounds(x, y, 100, 30);
 	    arTem[i].setBackground(Color.black);
-	    arTem[i].setFont(font);
+	    arTem[i].setFont(new Font("微软雅黑", Font.BOLD, 25));
 	    arTem[i].setForeground(Color.white);
 	    add(arTem[i]);
 	}
 
-	// 添加串口选择选项
-	commChoice.setBounds(160, 770, 200, 200);
-	// 检查是否有可用串口，有则加入选项中
-	if (commList == null || commList.size() < 1) {
-	    JOptionPane.showMessageDialog(null, "没有搜索到有效串口！", "错误", JOptionPane.INFORMATION_MESSAGE);
-	} else {
-	    for (String s : commList) {
-		commChoice.add(s);
-	    }
+	// 显示树脂干燥温度
+	for (int i = 0; i < SZGZNum; i++) {
+	    int x = 70 + (i % 12) * 125;
+	    int y = 770 + 50 * Math.round(i / 12);
+	    arTem[i + CDNum] = new Label("", Label.CENTER);
+	    arTem[i + CDNum].setBounds(x, y, 100, 30);
+	    arTem[i + CDNum].setBackground(Color.black);
+	    arTem[i + CDNum].setFont(new Font("微软雅黑", Font.BOLD, 25));
+	    arTem[i + CDNum].setForeground(Color.white);
+	    add(arTem[i + CDNum]);
 	}
-	add(commChoice);
-
-	// 添加波特率选项
-	bpsChoice.setBounds(526, 770, 200, 200);
-	bpsChoice.add("4800");
-	bpsChoice.add("9600");
-	bpsChoice.add("14400");
-	bpsChoice.add("19200");
-	add(bpsChoice);
 
 	// 添加打开串口按钮
-	openSerialButton.setBounds(900, 760, 225, 40);
+	openSerialButton.setBounds(700, 840, 225, 40);
 	openSerialButton.setBackground(Color.lightGray);
 	openSerialButton.setFont(new Font("微软雅黑", Font.BOLD, 20));
 	openSerialButton.setForeground(Color.darkGray);
 	add(openSerialButton);
 	// 添加打开串口按钮的事件监听
 	openSerialButton.addActionListener(new ActionListener() {
-
 	    public void actionPerformed(ActionEvent e) {
-
-		// 获取串口名称
-		String commName = commChoice.getSelectedItem();
-		// 获取波特率
-		String bpsStr = bpsChoice.getSelectedItem();
-
-		// 检查串口名称是否获取正确
-		if (commName == null || commName.equals("")) {
-		    JOptionPane.showMessageDialog(null, "没有搜索到有效串口！", "错误", JOptionPane.INFORMATION_MESSAGE);
-		} else {
-		    // 检查波特率是否获取正确
-		    if (bpsStr == null || bpsStr.equals("")) {
-			JOptionPane.showMessageDialog(null, "波特率获取错误！", "错误", JOptionPane.INFORMATION_MESSAGE);
-		    } else {
-			// 串口名、波特率均获取正确时
-			int bps = Integer.parseInt(bpsStr);
-			try {
-			    // 获取指定端口名及波特率的串口对象
-			    serialPort = SerialTool.openPort(commName, bps);
-			    // 在该串口对象上添加监听器
-			    SerialTool.addListener(serialPort, new SerialListener());
-			    // 监听成功进行提示
-			    JOptionPane.showMessageDialog(null, "监听成功，稍后将显示监测数据！", "提示",
-				    JOptionPane.INFORMATION_MESSAGE);
-			    // 启动定时请求数据的线程.余姚精创仪表有限公司 KCM-91WRS温度变送器
-			    new Thread() {
-				public void run() {
-				    while (true) {
-					try {
-					    for (int i = 1; i <= num; i++) {
-						// 向各个仪表发出读实时温度命令
-						String orderWithoutCrc = String.format("%02x", i).toUpperCase()
-							+ "0310010001";
-						String crc = Utilities.getCRC16(Utilities.hex2Bytes(orderWithoutCrc));
-						byte[] order = Utilities.hex2Bytes(orderWithoutCrc + crc);
-						SerialTool.sendToPort(serialPort, order);
-						// 等待一个数据处理后，再请求下一个数据
-						sleep(1000);
-					    }
-					} catch (Exception e) {
-					    e.printStackTrace();
-					}
-				    }
-				}
-			    }.start();
-			} catch (Exception e1) {
-			    e1.printStackTrace();
-			}
+		for (int i = 0; i < commList.size(); i++) {
+		    try {
+			// 打开串口
+			SerialPort serialPort = SerialTool.openPort(commList.get(i), bps);
+			serialPortList.add(serialPort);
+			// 在串口对象上添加监听器
+			SerialTool.addListener(serialPort, new SerialListener(serialPort, commList.get(i)));
+			// 启动定时请求数据的线程.
+			new Sender(serialPort, numList[i]).start();
+		    } catch (Exception e1) {
+			e1.printStackTrace();
 		    }
 		}
 	    }
@@ -177,18 +141,10 @@ public class Board extends Frame {
      * 画出主界面组件元素
      */
     public void paint(Graphics g) {
-	Color c = g.getColor();
 	g.setColor(Color.black);
 	g.setFont(new Font("微软雅黑", Font.BOLD, 25));
-	for (int i = 0; i < num; i++) {
-	    int x = 45 + (i % 3) * 380;
-	    int y = 80 + 70 * Math.round(i / 3);
-	    g.drawString("温度" + (i + 1) + ":", x, y);
-	}
-	g.setColor(Color.gray);
-	g.setFont(new Font("微软雅黑", Font.BOLD, 20));
-	g.drawString(" 串口选择： ", 45, 780);
-	g.drawString(" 波特率： ", 425, 780);
+	g.drawString("充电温度", 700, 65);
+	g.drawString("树脂干燥温度", 700, 730);
     }
 
     /**
@@ -214,56 +170,9 @@ public class Board extends Frame {
 	    while (true) {
 		// 调用重画方法
 		repaint();
-
-		// 扫描可用串口
-		commList = SerialTool.findPort();
-		if (commList != null && commList.size() > 0) {
-
-		    // 添加新扫描到的可用串口
-		    for (String s : commList) {
-			// 该串口名是否已存在，初始默认为不存在（在commList里存在但在commChoice里不存在，则新添加）
-			boolean commExist = false;
-
-			for (int i = 0; i < commChoice.getItemCount(); i++) {
-			    if (s.equals(commChoice.getItem(i))) {
-				// 当前扫描到的串口名已经在初始扫描时存在
-				commExist = true;
-				break;
-			    }
-			}
-			if (commExist) {
-			    // 当前扫描到的串口名已经在初始扫描时存在，直接进入下一次循环
-			    continue;
-			} else {
-			    // 若不存在则添加新串口名至可用串口下拉列表
-			    commChoice.add(s);
-			}
-		    }
-		    // 移除已经不可用的串口
-		    for (int i = 0; i < commChoice.getItemCount(); i++) {
-			// 该串口是否已失效，初始默认为已经失效（在commChoice里存在但在commList里不存在，则已经失效）
-			boolean commNotExist = true;
-
-			for (String s : commList) {
-			    if (s.equals(commChoice.getItem(i))) {
-				commNotExist = false;
-				break;
-			    }
-			}
-			if (commNotExist) {
-			    commChoice.remove(i);
-			} else {
-			    continue;
-			}
-		    }
-		} else {
-		    // 如果扫描到的commList为空，则移除所有已有串口
-		    commChoice.removeAll();
-		}
 		try {
 		    Thread.sleep(30);
 		} catch (InterruptedException e) {
-		    JOptionPane.showMessageDialog(null, e.getMessage(), "错误", JOptionPane.INFORMATION_MESSAGE);
 		    System.exit(0);
 		}
 	    }
@@ -274,6 +183,13 @@ public class Board extends Frame {
      * 以内部类形式创建一个串口监听类
      */
     private class SerialListener implements SerialPortEventListener {
+	private SerialPort serialPort;
+	private String com;
+
+	public SerialListener(SerialPort serialPort, String com) {
+	    this.serialPort = serialPort;
+	    this.com = com;
+	}
 
 	/**
 	 * 处理监控到的串口事件
@@ -301,44 +217,56 @@ public class Board extends Frame {
 	    case SerialPortEvent.DATA_AVAILABLE: // 1 串口存在可用数据
 		byte[] data = null;
 		try {
-		    if (serialPort == null) {
-			JOptionPane.showMessageDialog(null, "串口对象为空！监听失败！", "错误", JOptionPane.INFORMATION_MESSAGE);
+		    data = SerialTool.readFromPort(serialPort); // 读取数据，存入字节数组
+		    // 余姚精创仪表有限公司 KCM-91WRS温度变送器
+		    if (data == null || data.length != 7) { // 检查数据是否读取正确
+			System.out.println("读取数据过程中未获取到有效数据");
 		    } else {
-			data = SerialTool.readFromPort(serialPort); // 读取数据，存入字节数组
-
-			// 余姚精创仪表有限公司 KCM-91WRS温度变送器
-			if (data == null || data.length != 7) { // 检查数据是否读取正确
-			    System.out.println("读取数据过程中未获取到有效数据");
+			// CRC校验
+			String strData = Utilities.bytes2HexString(data);
+			String crc1 = strData.substring(10);
+			byte[] partData = new byte[5];
+			System.arraycopy(data, 0, partData, 0, 5);
+			String crc2 = Utilities.getCRC16(partData);
+			if (!crc1.equalsIgnoreCase(crc2)) {
+			    System.out.println("接收数据CRC检验错误");
 			} else {
-			    // CRC校验
-			    String strData = Utilities.bytes2HexString(data);
-			    String crc1 = strData.substring(10);
-			    byte[] partData = new byte[5];
-			    System.arraycopy(data, 0, partData, 0, 5);
-			    String crc2 = Utilities.getCRC16(partData);
-			    if (!crc1.equalsIgnoreCase(crc2)) {
-				System.out.println("接收数据CRC检验错误");
-			    } else {
-				try {
-				    // 解析数据,依据温度表的协议
-				    int address = Utilities.oneByte2Int(data[0]);
-				    int functionCode = Utilities.oneByte2Int(data[1]);
-				    // code==3表示上传温度数据
-				    if (functionCode == 3) {
-					// 数据长度1byte或2byte
-					int dataLength = Utilities.oneByte2Int(data[2]);
-					float temp = 0;
-					if (dataLength == 1) {
-					    temp = (float) Utilities.oneByte2Int(data[4]) / (float) 10;
-					} else if (dataLength == 2) {
-					    temp = (float) Utilities.getShort2(data, 3) / (float) 10;
-					}
-					// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+			    try {
+				// 解析数据,依据温度表的协议
+				int address = Utilities.oneByte2Int(data[0]);
+				int functionCode = Utilities.oneByte2Int(data[1]);
+				// code==3表示上传温度数据
+				if (functionCode == 3) {
+				    // 数据长度1byte或2byte
+				    int dataLength = Utilities.oneByte2Int(data[2]);
+				    float temp = 0;
+				    if (dataLength == 1) {
+					temp = (float) Utilities.oneByte2Int(data[4]) / (float) 10;
+				    } else if (dataLength == 2) {
+					temp = (float) Utilities.getShort2(data, 3) / (float) 10;
+				    }
+				    // 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+				    if (com.equalsIgnoreCase("com4")) {
 					arTem[address - 1].setText(String.valueOf(temp));
 				    }
-				} catch (ArrayIndexOutOfBoundsException e) {
-				    System.out.println("数据解析过程出错，更新界面数据失败！");
+				    if (com.equalsIgnoreCase("com5")) {
+					arTem[address - 1 + 30].setText(String.valueOf(temp));
+				    }
+				    if (com.equalsIgnoreCase("com6")) {
+					arTem[address - 1 + 57].setText(String.valueOf(temp));
+				    }
+				    if (com.equalsIgnoreCase("com7")) {
+					arTem[address - 1 + 84].setText(String.valueOf(temp));
+				    }
+				    if (com.equalsIgnoreCase("com8")) {
+					arTem[address - 1 + 111].setText(String.valueOf(temp));
+				    }
+				    if (com.equalsIgnoreCase("com9")) {
+					arTem[address - 1 + 138].setText(String.valueOf(temp));
+				    }
 				}
+			    } catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("数据解析过程出错，更新界面数据失败！");
 			    }
 			}
 		    }

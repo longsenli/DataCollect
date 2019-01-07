@@ -22,22 +22,22 @@ public class Monitor extends Frame {
     /**
      * 程序界面宽度
      */
-    public static final int WIDTH = 1190;
+    public static final int WIDTH = 1600;
 
     /**
      * 程序界面高度
      */
-    public static final int HEIGHT = 820;
+    public static final int HEIGHT = 900;
 
     /**
      * 程序界面出现位置（横坐标）
      */
-    public static final int LOC_X = 200;
+    public static final int LOC_X = 150;
 
     /**
      * 程序界面出现位置（纵坐标）
      */
-    public static final int LOC_Y = 70;
+    public static final int LOC_Y = 50;
 
     Color color = Color.WHITE;
     Image offScreen = null; // 用于双缓冲
@@ -57,7 +57,7 @@ public class Monitor extends Frame {
      */
     public void launchFrame() {
 	this.setBounds(LOC_X, LOC_Y, WIDTH, HEIGHT); // 设定程序在桌面出现的位置
-	this.setTitle("实时数据监控"); // 设置程序标题
+	this.setTitle("实时数据采集监控"); // 设置程序标题
 	this.setBackground(Color.white); // 设置背景色
 
 	this.addWindowListener(new WindowAdapter() {
@@ -79,19 +79,15 @@ public class Monitor extends Frame {
      * 画出程序界面各组件元素
      */
     public void paint(Graphics g) {
-	Color c = g.getColor();
-
 	g.setFont(new Font("微软雅黑", Font.BOLD, 40));
 	g.setColor(Color.black);
-	g.drawString("欢迎使用上位机数据监控系统", 340, 190);
+	g.drawString("上位机实时数据采集监控系统", 540, 190);
 
 	g.setFont(new Font("微软雅黑", Font.ITALIC, 26));
-	g.setColor(Color.BLACK);
-	g.drawString("Version：1.0", 500, 260);
+	g.drawString("Version：1.0", 730, 260);
 
-	g.setFont(new Font("微软雅黑", Font.BOLD, 30));
-	g.setColor(color.BLACK);
-	g.drawString("————点击Enter键进入主界面————", 320, 580);
+	g.setFont(new Font("微软雅黑", Font.BOLD, 26));
+	g.drawString("————点击Enter键进入主界面————", 550, 680);
     }
 
     /**

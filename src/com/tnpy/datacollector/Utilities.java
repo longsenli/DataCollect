@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * 一个工具类，为了支持和C#程序通信交互的转换工具类
+ * 一个工具类
  */
 public class Utilities {
 

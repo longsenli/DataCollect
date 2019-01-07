@@ -5,8 +5,11 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
+
+import com.tnpy.datacollector.Configer;
 
 /**
  * 将数据存入数据库
@@ -16,36 +19,42 @@ import java.util.UUID;
  */
 public class Storer extends Thread {
 
-    float[] data;
-    Properties con;
+    // 保存最新温度数据
+    Map<String, String> lastData;
 
-    public Storer(float[] lastData, Properties config) {
-	data = lastData;
-	con = config;
+    public Storer(Map<String, String> lastData) {
+	this.lastData = lastData;
     }
 
     @Override
     public void run() {
-	try {
-	    Class.forName(con.getProperty("mysql.driver-class-name"));
-	} catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	}
-	try (Connection conn = DriverManager.getConnection(con.getProperty("mysql.jdbc-url"),
-		con.getProperty("mysql.username"), con.getProperty("mysql.password"));
-		Statement stmt = conn.createStatement();) {
-	    // 当前时间
-	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String currentTime = formatter.format(new Date());
-	    for (int i = 0; i < data.length; i++) {
-		int no = Integer.parseInt(con.getProperty("instrument.startNo")) + i + 1;
-		String id = UUID.randomUUID().toString().replace("-", "").toLowerCase();
-		String sql = "insert into tnmesdb.tb_equipmentparamrecord (id,equipmentid,paramID,recordTime,value,equipmentTypeID) values('"
-			+ id + "'," + no + ",1,'" + currentTime + "'," + data[i] + ",3)";
-		stmt.execute(sql);
+	while (true) {
+	    try {
+		Class.forName(Configer.getValue("mysql.driver-class-name"));
+	    } catch (ClassNotFoundException e) {
+		e.printStackTrace();
 	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
+	    try (Connection conn = DriverManager.getConnection(Configer.getValue("mysql.jdbc-url"),
+		    Configer.getValue("mysql.username"), Configer.getValue("mysql.password"));
+		    Statement stmt = conn.createStatement();) {
+		// 当前时间
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String currentTime = formatter.format(new Date());
+		for (Entry<String, String> entry : lastData.entrySet()) {
+		    String id = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+		    String sql = "insert into tnmesdb.tb_equipmentparamrecord (id,equipmentid,paramID,recordTime,value,equipmentTypeID) values('"
+			    + id + "'," + entry.getKey() + ",1,'" + currentTime + "'," + entry.getValue() + ",3)";
+		    stmt.execute(sql);
+		}
+	    } catch (Exception ex) {
+		ex.printStackTrace();
+	    }
+	    // 休息10分钟
+	    try {
+		sleep(600000);
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    }
 	}
     }
 }

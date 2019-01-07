@@ -1,6 +1,7 @@
 package com.tnpy.datacollector.serial.kcma9;
 
 import java.awt.Label;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -15,11 +16,21 @@ public class Receiver implements SerialPortEventListener {
     private SerialPort serialPort;
     private String com;
     Label[] arTem;
+    Map<String, String> lastData;
 
-    public Receiver(SerialPort serialPort, String com, Label[] arTem) {
+    /**
+     * Constructor
+     * 
+     * @param serialPort 串口对象
+     * @param com        串口名称
+     * @param arTem      主页面显示小窗口
+     * @param lastData   最新采集数据集合
+     */
+    public Receiver(SerialPort serialPort, String com, Label[] arTem, Map<String, String> lastData) {
 	this.serialPort = serialPort;
 	this.com = com;
 	this.arTem = arTem;
+	this.lastData = lastData;
     }
 
     /**
@@ -76,24 +87,34 @@ public class Receiver implements SerialPortEventListener {
 				} else if (dataLength == 2) {
 				    temp = (float) Utilities.getShort2(data, 3) / (float) 10;
 				}
-				// 更新界面Label值(仪表的地址从1开始，label编号从0开始，此处要减1)
+				// 更新界面Label值
+				int boardNo = 0;
 				if (com.equalsIgnoreCase("com4")) {
-				    arTem[address - 1].setText(String.valueOf(temp));
+				    boardNo = address;
 				}
 				if (com.equalsIgnoreCase("com5")) {
-				    arTem[address - 1 + 30].setText(String.valueOf(temp));
+				    boardNo = address + 30;
 				}
 				if (com.equalsIgnoreCase("com6")) {
-				    arTem[address - 1 + 57].setText(String.valueOf(temp));
+				    boardNo = address + 57;
 				}
 				if (com.equalsIgnoreCase("com7")) {
-				    arTem[address - 1 + 84].setText(String.valueOf(temp));
+				    boardNo = address + 84;
 				}
 				if (com.equalsIgnoreCase("com8")) {
-				    arTem[address - 1 + 111].setText(String.valueOf(temp));
+				    boardNo = address + 111;
 				}
 				if (com.equalsIgnoreCase("com9")) {
-				    arTem[address - 1 + 138].setText(String.valueOf(temp));
+				    boardNo = address + 138;
+				}
+				// 仪表的地址从1开始，label编号从0开始，此处要减1
+				arTem[boardNo - 1].setText(String.valueOf(temp));
+
+				// 将新数据保存
+				if (com.equalsIgnoreCase("com9")) {
+				    lastData.put(String.valueOf(390000 + boardNo), String.valueOf(temp));
+				} else {
+				    lastData.put(String.valueOf(381000 + boardNo), String.valueOf(temp));
 				}
 			    }
 			} catch (ArrayIndexOutOfBoundsException e) {

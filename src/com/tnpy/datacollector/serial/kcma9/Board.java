@@ -13,6 +13,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.tnpy.datacollector.serial.SerialTool;
 
@@ -44,6 +46,8 @@ public class Board extends Frame {
     Button openSerialButton = new Button("START");
     // 重画时的画布
     Image offScreen;
+    // 保存最新温度数据
+    Map<String, String> lastData = new ConcurrentHashMap<String, String>();
 
     /**
      * 类的构造方法
@@ -116,11 +120,14 @@ public class Board extends Frame {
 		    try {
 			// 打开串口
 			SerialPort serialPort = SerialTool.openPort(commList.get(i), bps);
+			//保存串口对象到列表中
 			serialPortList.add(serialPort);
 			// 在串口对象上添加监听器
-			SerialTool.addListener(serialPort, new Receiver(serialPort, commList.get(i), arTem));
+			SerialTool.addListener(serialPort, new Receiver(serialPort, commList.get(i), arTem, lastData));
 			// 启动定时请求数据的线程.
 			new Sender(serialPort, numList[i]).start();
+			// 启动定时存储数据线程
+			new Storer(lastData).start();
 		    } catch (Exception e1) {
 			e1.printStackTrace();
 		    }

@@ -120,18 +120,18 @@ public class Board extends Frame {
 		    try {
 			// 打开串口
 			SerialPort serialPort = SerialTool.openPort(commList.get(i), bps);
-			//保存串口对象到列表中
+			// 保存串口对象到列表中
 			serialPortList.add(serialPort);
 			// 在串口对象上添加监听器
 			SerialTool.addListener(serialPort, new Receiver(serialPort, commList.get(i), arTem, lastData));
 			// 启动定时请求数据的线程.
 			new Sender(serialPort, numList[i]).start();
-			// 启动定时存储数据线程
-			new Storer(lastData).start();
 		    } catch (Exception e1) {
 			e1.printStackTrace();
 		    }
 		}
+		// 启动定时存储数据线程
+		new Storer(lastData).start();
 	    }
 	});
 	this.setResizable(false);

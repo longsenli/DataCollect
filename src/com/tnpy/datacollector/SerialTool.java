@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial;
+package com.tnpy.datacollector;
 
 import java.io.IOException;
 import java.io.InputStream;

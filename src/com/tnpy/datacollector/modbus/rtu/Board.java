@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial.rtu;
+package com.tnpy.datacollector.modbus.rtu;
 
 import java.awt.Button;
 import java.awt.Color;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.tnpy.datacollector.serial.SerialTool;
+import com.tnpy.datacollector.SerialTool;
 
 import gnu.io.SerialPort;
 

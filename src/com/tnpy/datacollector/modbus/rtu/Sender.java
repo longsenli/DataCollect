@@ -1,7 +1,7 @@
-package com.tnpy.datacollector.serial.rtu;
+package com.tnpy.datacollector.modbus.rtu;
 
+import com.tnpy.datacollector.SerialTool;
 import com.tnpy.datacollector.Utilities;
-import com.tnpy.datacollector.serial.SerialTool;
 
 import gnu.io.SerialPort;
 

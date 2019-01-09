@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial.rtu;
+package com.tnpy.datacollector.modbus.rtu;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

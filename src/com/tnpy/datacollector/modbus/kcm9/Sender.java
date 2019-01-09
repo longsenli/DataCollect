@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.modbus.kmc9;
+package com.tnpy.datacollector.modbus.kcm9;
 
 import com.tnpy.datacollector.SerialTool;
 import com.tnpy.datacollector.Utilities;

@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial.kcma9;
+package com.tnpy.datacollector.serial.rtu;
 
 import com.tnpy.datacollector.Utilities;
 import com.tnpy.datacollector.serial.SerialTool;

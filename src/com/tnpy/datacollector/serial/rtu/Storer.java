@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.serial.kcma9;
+package com.tnpy.datacollector.serial.rtu;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

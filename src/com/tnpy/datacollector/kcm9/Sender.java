@@ -1,7 +1,7 @@
-package com.tnpy.datacollector.modbus.kcm9;
+package com.tnpy.datacollector.kcm9;
 
 import com.tnpy.datacollector.SerialTool;
-import com.tnpy.datacollector.Utilities;
+import com.tnpy.datacollector.Util;
 
 import gnu.io.SerialPort;
 
@@ -23,8 +23,8 @@ public class Sender extends Thread {
 		for (int m = 1; m <= num; m++) {
 		    // 余姚精创仪表有限公司KCM-91WRS
 		    String orderWithoutCrc = String.format("%02x", m).toUpperCase() + "0310010001";
-		    String crc = Utilities.getCRC16(Utilities.hex2Bytes(orderWithoutCrc));
-		    byte[] order = Utilities.hex2Bytes(orderWithoutCrc + crc);
+		    String crc = Util.getCRC16(Util.hex2Bytes(orderWithoutCrc));
+		    byte[] order = Util.hex2Bytes(orderWithoutCrc + crc);
 		    SerialTool.sendToPort(serialPort, order);
 		    // 等待一个数据处理后，再请求下一个数据
 		    sleep(1000);

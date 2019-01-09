@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.modbus.kcm9;
+package com.tnpy.datacollector.kcm9;
 
 import java.awt.Color;
 import java.awt.Font;

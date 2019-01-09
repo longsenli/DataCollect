@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.modbus.kcm9;
+package com.tnpy.datacollector.kcm9;
 
 import java.awt.Label;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import com.tnpy.datacollector.SerialTool;
-import com.tnpy.datacollector.Utilities;
+import com.tnpy.datacollector.Util;
 
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -65,27 +65,27 @@ public class Receiver implements SerialPortEventListener {
 		    System.out.println("读取数据过程中未获取到有效数据");
 		} else {
 		    // CRC校验
-		    String strData = Utilities.bytes2HexString(data);
+		    String strData = Util.bytes2HexString(data);
 		    String crc1 = strData.substring(10);
 		    byte[] partData = new byte[5];
 		    System.arraycopy(data, 0, partData, 0, 5);
-		    String crc2 = Utilities.getCRC16(partData);
+		    String crc2 = Util.getCRC16(partData);
 		    if (!crc1.equalsIgnoreCase(crc2)) {
 			System.out.println("接收数据CRC检验错误");
 		    } else {
 			try {
 			    // 解析数据,依据温度表的协议
-			    int address = Utilities.oneByte2Int(data[0]);
-			    int functionCode = Utilities.oneByte2Int(data[1]);
+			    int address = Util.oneByte2Int(data[0]);
+			    int functionCode = Util.oneByte2Int(data[1]);
 			    // code==3表示上传温度数据
 			    if (functionCode == 3) {
 				// 数据长度1byte或2byte
-				int dataLength = Utilities.oneByte2Int(data[2]);
+				int dataLength = Util.oneByte2Int(data[2]);
 				float temp = 0;
 				if (dataLength == 1) {
-				    temp = (float) Utilities.oneByte2Int(data[4]) / (float) 10;
+				    temp = (float) Util.oneByte2Int(data[4]) / (float) 10;
 				} else if (dataLength == 2) {
-				    temp = (float) Utilities.getShort2(data, 3) / (float) 10;
+				    temp = (float) Util.getShort(data, 3) / (float) 10;
 				}
 				// 更新界面Label值
 				int boardNo = 0;

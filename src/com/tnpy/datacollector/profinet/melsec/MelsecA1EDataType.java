@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.melsec;
+package com.tnpy.datacollector.profinet.melsec;
 
 /**
  * 三菱PLC的数据类型，此处包含了几个常用的类型

@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.siemens;
+package com.tnpy.datacollector.profinet.siemens;
 
 /**
  * 西门子的PLC类型，目前支持的访问类型

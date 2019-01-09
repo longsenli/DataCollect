@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.melsec;
+package com.tnpy.datacollector.profinet.melsec;
 
 
 /**

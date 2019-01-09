@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.siemens;
+package com.tnpy.datacollector.profinet.siemens;
 
 import HslCommunication.BasicFramework.SoftBasic;
 import HslCommunication.Core.IMessage.FetchWriteMessage;
@@ -7,7 +7,6 @@ import HslCommunication.Core.Transfer.ReverseBytesTransform;
 import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
 import HslCommunication.Core.Types.OperateResultExThree;
-import HslCommunication.StringResources;
 
 /**
  * 使用了Fetch/Write协议来和西门子进行通讯，该种方法需要在PLC侧进行一些配置

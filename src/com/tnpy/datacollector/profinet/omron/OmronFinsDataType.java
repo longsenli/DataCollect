@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.omron;
+package com.tnpy.datacollector.profinet.omron;
 
 /**
  * 欧姆龙的Fins协议的数据类型

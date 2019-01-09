@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.omron;
+package com.tnpy.datacollector.profinet.omron;
 
 import HslCommunication.Core.IMessage.FinsMessage;
 import HslCommunication.Core.Net.NetworkBase.NetworkDeviceBase;
@@ -6,8 +6,7 @@ import HslCommunication.Core.Transfer.ReverseWordTransform;
 import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
 import HslCommunication.Core.Types.OperateResultExTwo;
-import HslCommunication.StringResources;
-import HslCommunication.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 import java.net.Socket;
 

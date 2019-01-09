@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.melsec;
+package com.tnpy.datacollector.profinet.melsec;
 
 import HslCommunication.Core.IMessage.MelsecA1EBinaryMessage;
 import HslCommunication.Core.Net.NetworkBase.NetworkDeviceBase;
@@ -6,8 +6,7 @@ import HslCommunication.Core.Transfer.RegularByteTransform;
 import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
 import HslCommunication.Core.Types.OperateResultExTwo;
-import HslCommunication.StringResources;
-import HslCommunication.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 三菱PLC通讯协议，采用A兼容1E帧协议实现，使用二进制码通讯，请根据实际型号来进行选取

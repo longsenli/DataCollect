@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.modbus.rtu;
+package com.tnpy.datacollector.modbus.kmc9;
 
 import java.awt.Button;
 import java.awt.Color;

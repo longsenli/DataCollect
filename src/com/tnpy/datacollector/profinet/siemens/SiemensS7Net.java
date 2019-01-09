@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.siemens;
+package com.tnpy.datacollector.profinet.siemens;
 
 import HslCommunication.BasicFramework.SoftBasic;
 import HslCommunication.Core.IMessage.S7Message;
@@ -8,8 +8,7 @@ import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
 import HslCommunication.Core.Types.OperateResultExThree;
 import HslCommunication.Core.Types.OperateResultExTwo;
-import HslCommunication.StringResources;
-import HslCommunication.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.net.Socket;

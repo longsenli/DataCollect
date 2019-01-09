@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.plc.melsec;
+package com.tnpy.datacollector.profinet.melsec;
 
 import HslCommunication.Core.IMessage.MelsecQnA3EBinaryMessage;
 import HslCommunication.Core.Net.NetworkBase.NetworkDeviceBase;
@@ -6,8 +6,7 @@ import HslCommunication.Core.Transfer.RegularByteTransform;
 import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
 import HslCommunication.Core.Types.OperateResultExTwo;
-import HslCommunication.StringResources;
-import HslCommunication.Utilities;
+import com.tnpy.datacollector.Utilities;
 
 /**
  * 三菱的实际数据交互类

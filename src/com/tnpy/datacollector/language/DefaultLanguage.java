@@ -1,9 +1,9 @@
-package com.tnpy.datacollector;
+package com.tnpy.datacollector.language;
 
 /**
- * 系统消息
+ * 系统的语言基类，默认也即是中文版本
  */
-public class Message {
+public class DefaultLanguage {
     /***********************************************************************************
      *
      * 一般的错误信息

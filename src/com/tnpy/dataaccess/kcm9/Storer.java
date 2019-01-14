@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.kcm9;
+package com.tnpy.dataaccess.kcm9;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,9 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
-import com.tnpy.datacollector.Configer;
+import com.tnpy.dataaccess.Configer;
+
+import java.util.UUID;
 
 /**
  * 将数据存入数据库

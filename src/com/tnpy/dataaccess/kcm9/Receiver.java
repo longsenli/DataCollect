@@ -1,12 +1,12 @@
-package com.tnpy.datacollector.kcm9;
+package com.tnpy.dataaccess.kcm9;
 
 import java.awt.Label;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import com.tnpy.datacollector.SerialTool;
-import com.tnpy.datacollector.Util;
+import com.tnpy.dataaccess.SerialTool;
+import com.tnpy.dataaccess.Util;
 
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;

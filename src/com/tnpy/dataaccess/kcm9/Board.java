@@ -1,4 +1,4 @@
-package com.tnpy.datacollector.kcm9;
+package com.tnpy.dataaccess.kcm9;
 
 import java.awt.Button;
 import java.awt.Color;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.tnpy.datacollector.SerialTool;
+import com.tnpy.dataaccess.SerialTool;
 
 import gnu.io.SerialPort;
 

@@ -1,4 +1,4 @@
-package com.tnpy.datacollector;
+package com.tnpy.dataaccess;
 
 import java.io.IOException;
 import java.io.InputStream;

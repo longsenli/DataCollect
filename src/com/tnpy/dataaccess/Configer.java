@@ -1,4 +1,4 @@
-package com.tnpy.datacollector;
+package com.tnpy.dataaccess;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -12,7 +12,7 @@ public class Configer {
 
     public static String getValue(String key) {
 	if (prop == null) {
-	    try (InputStream is = ClassLoader.getSystemResourceAsStream("com/tnpy/datacollector/config.properties");) {
+	    try (InputStream is = ClassLoader.getSystemResourceAsStream("com/tnpy/dataaccess/config.properties");) {
 		prop = new Properties();
 		prop.load(is);
 	    } catch (Exception e) {

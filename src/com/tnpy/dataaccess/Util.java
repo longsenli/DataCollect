@@ -1,4 +1,4 @@
-package com.tnpy.datacollector;
+package com.tnpy.dataaccess;
 
 /**
  * 工具类

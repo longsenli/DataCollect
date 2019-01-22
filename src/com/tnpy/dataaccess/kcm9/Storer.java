@@ -61,8 +61,8 @@ public class Storer extends Thread {
 					// 判断值是否在设置范围内
 					rs = stmt.executeQuery("select max,min FROM ilpsdb.tb_parameterinfo where id='" + paramID + "'");
 					if (rs.next()) {
-						double max = rs.getDouble(0);
-						double min = rs.getDouble(1);
+						double max = rs.getDouble(1);
+						double min = rs.getDouble(2);
 						if (Double.parseDouble(value) > max) {
 							status = "3";
 						} else if (Double.parseDouble(value) < min) {
@@ -77,7 +77,7 @@ public class Storer extends Thread {
 					String sql = "insert into ilpsdb.tb_equipmentparamrecord (id,equipmentid,paramID,recordTime,value,recorder,equipmentTypeID,status) values('"
 							+ id + "','" + equipmentID + "','" + paramID + "','" + currentTime + "','" + value
 							+ "','仪表采集','" + equipmentTypeID + "','" + status + "')";
-					System.out.println("采集入库==========" + sql);
+//					System.out.println("采集入库==========" + sql);
 					stmt.execute(sql);
 				}
 			} catch (Exception ex) {

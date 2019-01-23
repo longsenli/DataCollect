@@ -112,7 +112,7 @@ public class Receiver implements SerialPortEventListener {
 
 								// 将新数据保存
 								if (com.equalsIgnoreCase("com9")) {
-									lastData.put(String.valueOf(390000 + boardNo), String.valueOf(temp));
+									lastData.put(String.valueOf(390000 + address), String.valueOf(temp));
 								} else {
 									lastData.put(String.valueOf(381000 + boardNo), String.valueOf(temp));
 								}

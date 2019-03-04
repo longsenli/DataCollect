@@ -29,7 +29,7 @@ public class Board extends Frame {
 	Monitor client;
 
 	// 通信波特率
-	static final int bps = 9600;
+	static final int bps = 2400;
 	// 串口列表
 	List<String> commList = new ArrayList<String>(6);
 	// 485仪表的数量

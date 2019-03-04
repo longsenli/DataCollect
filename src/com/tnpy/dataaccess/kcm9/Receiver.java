@@ -39,7 +39,7 @@ public class Receiver implements SerialPortEventListener {
 	public void serialEvent(SerialPortEvent serialPortEvent) {
 		try {
 			// 等待数据全部到位。
-			Thread.sleep(100);
+			Thread.sleep(300);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
